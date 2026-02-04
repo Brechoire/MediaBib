@@ -1,0 +1,482 @@
+# =============================================================================
+# SECRETS ET INFORMATIONS SENSIBLES
+# =============================================================================
+
+# Fichiers d'environnement
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.production
+.env.staging
+
+# Clés et certificats
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*.cer
+*.der
+*.jks
+*.keystore
+
+# Fichiers de configuration sensibles
+secrets.yaml
+secrets.json
+secrets.yml
+secrets.toml
+config.local.py
+config.dev.py
+config.prod.py
+settings.local.py
+local_settings.py
+
+# Tokens et clés API
+*.token
+*.apikey
+*.secret
+
+# Fichiers de credentials
+credentials.json
+credentials.yaml
+credentials.yml
+service-account.json
+client_secret*.json
+
+# =============================================================================
+# PYTHON
+# =============================================================================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# PEP 582
+__pypackages__/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+venv/
+ENV/
+env/
+.venv/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# PyCharm
+.idea/
+
+# =============================================================================
+# IDE ET ÉDITEURS
+# =============================================================================
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+.history/
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# JetBrains (PyCharm, IntelliJ, etc.)
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Atom
+.atom/
+
+# Vim
+*.swp
+*.swo
+*~
+.netrwhist
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# NetBeans
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# Xcode
+*.xcworkspace
+*.xcodeproj
+
+# =============================================================================
+# SYSTÈMES D'EXPLOITATION
+# =============================================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.nfs*
+
+# =============================================================================
+# DÉPENDANCES ET PACKAGES
+# =============================================================================
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Composer (PHP)
+/vendor/
+composer.lock
+
+# Ruby
+*.gem
+*.rbc
+/.config
+/coverage/
+/InstalledFiles
+/pkg/
+/spec/reports/
+/spec/examples.txt
+/test/tmp/
+/test/version_tmp/
+/tmp/
+
+# Go
+/vendor/
+/Godeps/
+
+# Rust
+/target/
+**/*.rs.bk
+Cargo.lock
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+
+# =============================================================================
+# BASES DE DONNÉES
+# =============================================================================
+
+*.db
+*.sql
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# MongoDB
+*.mongodb
+
+# Redis
+dump.rdb
+
+# =============================================================================
+# LOGS ET DONNÉES
+# =============================================================================
+
+*.log
+logs/
+log/
+*.log.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Données locales
+data/
+datasets/
+dataset/
+
+# Fichiers temporaires
+tmp/
+temp/
+*.tmp
+*.temp
+*.cache
+
+# =============================================================================
+# RAPPORTS ET DOCUMENTATION
+# =============================================================================
+
+# Rapports de sécurité
+security-reports/
+bandit-report.json
+bandit-report.xml
+pip-audit-report.json
+safety-report.json
+
+# Rapports de couverture
+coverage/
+htmlcov/
+.coverage
+.coverage.*
+
+# Documentation générée
+docs/_build/
+site/
+
+# =============================================================================
+# DOCKER ET CONTENEURS
+# =============================================================================
+
+.dockerignore
+Dockerfile.*
+docker-compose.*.yml
+.docker/
+
+# Kubernetes
+*.yaml.orig
+*.yml.orig
+
+# =============================================================================
+# CI/CD
+# =============================================================================
+
+.github/workflows/*.local.yml
+.gitlab-ci.local.yml
+.travis.local.yml
+
+# =============================================================================
+# FICHIERS SPÉCIFIQUES AU PROJET
+# =============================================================================
+
+# Skills baseline
+.secrets.baseline
+.baseline
+
+# Fichiers de configuration locaux
+config.local.ini
+config.local.json
+config.local.yaml
+
+# Fichiers de test
+test-results/
+tests-results/
+junit.xml
+
+# Fichiers de build
+build/
+dist/
+out/
+
+# Fichiers de déploiement
+.deploy/
+deploy/
+
+# Fichiers de backup
+*.bak
+*.backup
+*.old
+*.orig
+
+# =============================================================================
+# DIVERS
+# =============================================================================
+
+# Fichiers de débogage
+*.debug
+
+# Fichiers de profilage
+*.prof
+
+# Fichiers de cache
+.cache/
+__pycache__/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Fichiers de session
+*.session
+*.session-journal
+
+# Fichiers de verrouillage
+*.lock
+!Pipfile.lock
+!Cargo.lock
+!composer.lock
+!yarn.lock
+!package-lock.json
+
+# Fichiers de patch
+*.patch
+*.diff
+
+# Fichiers de merge
+*.orig
+*.rej
+
+# Fichiers de sauvegarde
+*~
+*.swp
+*.swo
+*.swn
+*.bak
