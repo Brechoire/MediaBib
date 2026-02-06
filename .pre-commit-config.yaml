@@ -12,6 +12,7 @@ repos:
       - id: bandit
         args: ['-r', '.', '-ll', '-x', 'tests,venv,.venv,env,__pycache__,build,dist,node_modules']
         exclude: ^tests/
+        pass_filenames: false
 
   - repo: local
     hooks:
