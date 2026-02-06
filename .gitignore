@@ -483,3 +483,6 @@ __pycache__/
 *.swo
 *.swn
 *.bak
+
+# Dossiers de développement
+xml/
