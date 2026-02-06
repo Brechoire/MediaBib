@@ -1,8 +1,8 @@
-# Script de vérification de sécurité pré-push
+# Script de verification de securite pre-push
 # Usage: .\security-check.ps1 [-Full] [-CI]
 # Options:
 #   -Full    : Scan complet incluant l'historique git
-#   -Quick   : Vérification rapide (défaut)
+#   -Quick   : Verification rapide (defaut)
 #   -CI      : Mode CI (sortie JSON uniquement)
 
 param(
@@ -11,7 +11,7 @@ param(
     [switch]$CI
 )
 
-# Si -Full est spécifié, désactiver le mode quick
+# Si -Full est specifie, desactiver le mode quick
 if ($Full) {
     $Quick = $false
 }
@@ -42,34 +42,34 @@ function Print-Header {
 function Print-Success {
     param([string]$Message)
     if (-not $CI) {
-        Write-Host "$Green✅ $Message$NC"
+        Write-Host "$Green[OK] $Message$NC"
     }
 }
 
 function Print-Warning {
     param([string]$Message)
     if (-not $CI) {
-        Write-Host "$Yellow⚠️  $Message$NC"
+        Write-Host "$Yellow[!] $Message$NC"
     }
 }
 
 function Print-Error {
     param([string]$Message)
     if (-not $CI) {
-        Write-Host "$Red❌ $Message$NC"
+        Write-Host "$Red[X] $Message$NC"
     }
 }
 
 function Print-Info {
     param([string]$Message)
     if (-not $CI) {
-        Write-Host "$Blueℹ️  $Message$NC"
+        Write-Host "$Blue[i] $Message$NC"
     }
 }
 
-# Vérification des dépendances
+# Verification des dependances
 function Check-Dependencies {
-    Print-Header "Vérification des dépendances"
+    Print-Header "Verification des dependances"
     
     $MissingDeps = @()
     
@@ -91,47 +91,47 @@ function Check-Dependencies {
         exit 1
     }
     
-    Print-Success "Toutes les dépendances sont installées"
+    Print-Success "Toutes les dependances sont installees"
 }
 
-# Création du dossier de rapports
+# Creation du dossier de rapports
 function Setup-ReportsDir {
     if ($CI) {
         New-Item -ItemType Directory -Force -Path $ReportsDir | Out-Null
     }
 }
 
-# Vérification des secrets avec detect-secrets
+# Verification des secrets avec detect-secrets
 function Check-Secrets {
-    Print-Header "1. Vérification des secrets (detect-secrets)"
+    Print-Header "1. Verification des secrets (detect-secrets)"
     
     if (-not (Test-Path ".secrets.baseline")) {
-        Print-Warning "Fichier .secrets.baseline non trouvé"
-        Print-Info "Création de la baseline..."
+        Print-Warning "Fichier .secrets.baseline non trouve"
+        Print-Info "Creation de la baseline..."
         detect-secrets scan | Out-File -FilePath ".secrets.baseline" -Encoding UTF8
-        Print-Success "Baseline créée: .secrets.baseline"
-        Print-Warning "Vérifiez ce fichier et committez-le"
+        Print-Success "Baseline creee: .secrets.baseline"
+        Print-Warning "Verifiez ce fichier et committez-le"
     }
     
     if ($Full) {
         Print-Info "Scan complet de l'historique git..."
-        $Output = detect-secrets scan --all-files --force-use-all-plugins --baseline .secrets.baseline 2&1
+        $Output = detect-secrets scan --all-files --force-use-all-plugins --baseline .secrets.baseline 2>&1
         if ($LASTEXITCODE -eq 0) {
-            Print-Success "Aucun secret trouvé dans l'historique"
+            Print-Success "Aucun secret trouve dans l'historique"
         } else {
-            Print-Error "Secrets trouvés dans l'historique !"
+            Print-Error "Secrets trouves dans l'historique !"
             Write-Host $Output
             $script:ExitCode = 1
         }
     } else {
         Print-Info "Scan des fichiers actuels..."
-        $Output = detect-secrets scan --baseline .secrets.baseline 2&1
+        $Output = detect-secrets scan --baseline .secrets.baseline 2>&1
         if ($LASTEXITCODE -eq 0) {
-            Print-Success "Aucun nouveau secret détecté"
+            Print-Success "Aucun nouveau secret detecte"
         } else {
-            Print-Error "Nouveaux secrets détectés !"
+            Print-Error "Nouveaux secrets detectes !"
             Write-Host $Output
-            Print-Info "Exécutez 'detect-secrets audit .secrets.baseline' pour examiner"
+            Print-Info "Executez 'detect-secrets audit .secrets.baseline' pour examiner"
             $script:ExitCode = 1
         }
     }
@@ -141,9 +141,9 @@ function Check-Secrets {
     }
 }
 
-# Analyse de sécurité avec bandit
+# Analyse de securite avec bandit
 function Check-Bandit {
-    Print-Header "2. Analyse de sécurité du code (bandit)"
+    Print-Header "2. Analyse de securite du code (bandit)"
     
     $BanditArgs = @("-r", ".")
     
@@ -151,18 +151,18 @@ function Check-Bandit {
         $BanditArgs += @("-f", "json", "-o", "$ReportsDir\bandit-$Timestamp.json")
     }
     
-    # Exclure les répertoires courants
+    # Exclure les repertoires courants
     $BanditArgs += @("-x", "./tests,./venv,./.venv,./env,./__pycache__,./build,./dist,./node_modules")
     
-    Print-Info "Exécution de bandit..."
+    Print-Info "Execution de bandit..."
     
-    $Output = bandit @BanditArgs -ll 2&1
+    $Output = bandit @BanditArgs -ll 2>&1
     $BanditExit = $LASTEXITCODE
     
     if ($BanditExit -eq 0) {
-        Print-Success "Aucune vulnérabilité HIGH/CRITICAL détectée"
+        Print-Success "Aucune vulnerabilite HIGH/CRITICAL detectee"
     } else {
-        Print-Error "Vulnérabilités détectées !"
+        Print-Error "Vulnerabilites detectees !"
         if (-not $CI) {
             bandit -r . -x ./tests,./venv,./.venv,./env,./__pycache__ -ll 2>$null | Write-Host
         }
@@ -170,9 +170,9 @@ function Check-Bandit {
     }
 }
 
-# Vérification des dépendances avec pip-audit
+# Verification des dependances avec pip-audit
 function Check-DependenciesVulns {
-    Print-Header "3. Vérification des dépendances (pip-audit)"
+    Print-Header "3. Verification des dependances (pip-audit)"
     
     $AuditArgs = @()
     
@@ -184,13 +184,13 @@ function Check-DependenciesVulns {
     
     if (Test-Path "requirements.txt") {
         Print-Info "Audit de requirements.txt..."
-        $Output = pip-audit -r requirements.txt @AuditArgs 2&1
+        $Output = pip-audit -r requirements.txt @AuditArgs 2>&1
         $AuditExit = $LASTEXITCODE
         
         if ($AuditExit -eq 0) {
-            Print-Success "Aucune vulnérabilité dans les dépendances"
+            Print-Success "Aucune vulnerabilite dans les dependances"
         } else {
-            Print-Error "Vulnérabilités détectées dans les dépendances !"
+            Print-Error "Vulnerabilites detectees dans les dependances !"
             if (-not $CI) {
                 pip-audit -r requirements.txt --desc 2>$null | Write-Host
             }
@@ -198,40 +198,40 @@ function Check-DependenciesVulns {
         }
     } elseif (Test-Path "pyproject.toml") {
         Print-Info "Audit de pyproject.toml..."
-        $Output = pip-audit @AuditArgs 2&1
+        $Output = pip-audit @AuditArgs 2>&1
         $AuditExit = $LASTEXITCODE
         
         if ($AuditExit -eq 0) {
-            Print-Success "Aucune vulnérabilité dans les dépendances"
+            Print-Success "Aucune vulnerabilite dans les dependances"
         } else {
-            Print-Error "Vulnérabilités détectées dans les dépendances !"
+            Print-Error "Vulnerabilites detectees dans les dependances !"
             if (-not $CI) {
                 pip-audit --desc 2>$null | Write-Host
             }
             $script:ExitCode = 1
         }
     } else {
-        Print-Warning "Aucun fichier requirements.txt ou pyproject.toml trouvé"
-        Print-Info "Audit des packages installés..."
-        $Output = pip-audit @AuditArgs 2&1
+        Print-Warning "Aucun fichier requirements.txt ou pyproject.toml trouve"
+        Print-Info "Audit des packages installes..."
+        $Output = pip-audit @AuditArgs 2>&1
         $AuditExit = $LASTEXITCODE
         
         if ($AuditExit -eq 0) {
-            Print-Success "Aucune vulnérabilité détectée"
+            Print-Success "Aucune vulnerabilite detectee"
         } else {
-            Print-Error "Vulnérabilités détectées !"
+            Print-Error "Vulnerabilites detectees !"
             $script:ExitCode = 1
         }
     }
 }
 
-# Vérification des fichiers sensibles
+# Verification des fichiers sensibles
 function Check-SensitiveFiles {
-    Print-Header "4. Vérification des fichiers sensibles"
+    Print-Header "4. Verification des fichiers sensibles"
     
     $SensitiveFiles = @()
     
-    # Vérifier les fichiers traqués par git
+    # Verifier les fichiers traques par git
     if (Get-Command git -ErrorAction SilentlyContinue) {
         $GitFiles = git ls-files 2>$null | Where-Object { 
             $_ -match '\.(env|key|pem|p12|pfx)$' -or 
@@ -244,24 +244,24 @@ function Check-SensitiveFiles {
     }
     
     if ($SensitiveFiles.Count -eq 0) {
-        Print-Success "Aucun fichier sensible traqué par git"
+        Print-Success "Aucun fichier sensible traque par git"
     } else {
-        Print-Error "Fichiers sensibles traqués par git :"
+        Print-Error "Fichiers sensibles traques par git :"
         foreach ($file in $SensitiveFiles) {
             Write-Host "  - $file"
         }
-        Print-Info "Ajoutez ces fichiers à .gitignore et retirez-les avec: git rm --cached <fichier>"
+        Print-Info "Ajoutez ces fichiers a .gitignore et retirez-les avec: git rm --cached <fichier>"
         $script:ExitCode = 1
     }
 }
 
-# Vérification du .gitignore
+# Verification du .gitignore
 function Check-Gitignore {
-    Print-Header "5. Vérification du .gitignore"
+    Print-Header "5. Verification du .gitignore"
     
     if (-not (Test-Path ".gitignore")) {
-        Print-Error "Fichier .gitignore non trouvé !"
-        Print-Info "Créez un .gitignore avec les règles de base"
+        Print-Error "Fichier .gitignore non trouve !"
+        Print-Info "Creez un .gitignore avec les regles de base"
         $script:ExitCode = 1
         return
     }
@@ -286,13 +286,13 @@ function Check-Gitignore {
     }
     
     if ($MissingPatterns.Count -eq 0) {
-        Print-Success ".gitignore correctement configuré"
+        Print-Success ".gitignore correctement configure"
     } else {
         Print-Warning "Patterns manquants dans .gitignore :"
         foreach ($pattern in $MissingPatterns) {
             Write-Host "  - $pattern"
         }
-        Print-Info "Ajoutez ces patterns à votre .gitignore"
+        Print-Info "Ajoutez ces patterns a votre .gitignore"
     }
 }
 
@@ -316,7 +316,7 @@ function Check-GitHistory {
         if (-not $LargeFiles) {
             Print-Success "Aucun gros fichier (>10MB) dans l'historique"
         } else {
-            Print-Warning "Gros fichiers détectés dans l'historique :"
+            Print-Warning "Gros fichiers detectes dans l'historique :"
             $LargeFiles | ForEach-Object { Write-Host "  $_" }
             Print-Info "Ces fichiers peuvent contenir des secrets binaires"
         }
@@ -325,10 +325,10 @@ function Check-GitHistory {
     }
 }
 
-# Génération du rapport final
+# Generation du rapport final
 function Generate-Report {
     if ($CI) {
-        Print-Header "Rapports générés"
+        Print-Header "Rapports generes"
         Write-Host "Les rapports JSON sont disponibles dans: $ReportsDir\"
         Get-ChildItem "$ReportsDir\" -ErrorAction SilentlyContinue | ForEach-Object {
             Write-Host "  - $($_.Name)"
@@ -336,24 +336,24 @@ function Generate-Report {
     }
 }
 
-# Résumé final
+# Resume final
 function Print-Summary {
     if (-not $CI) {
         Write-Host ""
         Write-Host "========================================"
-        Write-Host "RÉSUMÉ"
+        Write-Host "RESUME"
         Write-Host "========================================"
         
         if ($ExitCode -eq 0) {
-            Print-Success "Toutes les vérifications sont passées !"
-            Print-Info "Vous pouvez push en toute sécurité"
+            Print-Success "Toutes les verifications sont passees !"
+            Print-Info "Vous pouvez push en toute securite"
             Write-Host ""
             Write-Host "Commande: git push"
         } else {
-            Print-Error "Des problèmes de sécurité ont été détectés !"
-            Print-Info "Corrigez les problèmes avant de push"
+            Print-Error "Des problemes de securite ont ete detectes !"
+            Print-Info "Corrigez les problemes avant de push"
             Write-Host ""
-            Write-Host "Pour ignorer temporairement (déconseillé):"
+            Write-Host "Pour ignorer temporairement (deconseille):"
             Write-Host "  git push --no-verify"
         }
     }
@@ -363,14 +363,14 @@ function Print-Summary {
 function Main {
     if (-not $CI) {
         Write-Host ""
-        Write-Host "╔════════════════════════════════════════════════╗"
-        Write-Host "║   🔒 Vérification de Sécurité Pré-Push 🔒     ║"
-        Write-Host "╚════════════════════════════════════════════════╝"
+        Write-Host "+------------------------------------------------+"
+        Write-Host "|   [SECURITY CHECK] Pre-Push Security Check   |"
+        Write-Host "+------------------------------------------------+"
         
         if ($Full) {
             Write-Host "Mode: Scan complet"
         } else {
-            Write-Host "Mode: Vérification rapide"
+            Write-Host "Mode: Verification rapide"
         }
         Write-Host ""
     }
@@ -389,5 +389,5 @@ function Main {
     exit $ExitCode
 }
 
-# Exécution
+# Execution
 Main

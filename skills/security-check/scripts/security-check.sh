@@ -311,9 +311,20 @@ check_gitignore() {
     local missing_patterns=()
     
     for pattern in "${required_patterns[@]}"; do
-        if ! grep -q "$pattern" .gitignore 2>/dev/null; then
-            missing_patterns+=("$pattern")
-        fi
+        # Vérifier si le pattern existe ou si une variante équivalente existe
+        case "$pattern" in
+            "*.pyc")
+                # *.pyc peut être couvert par *.py[cod]
+                if ! grep -qE '\*\.pyc|\*\.py\[cod\]' .gitignore 2>/dev/null; then
+                    missing_patterns+=("$pattern")
+                fi
+                ;;
+            *)
+                if ! grep -q "$pattern" .gitignore 2>/dev/null; then
+                    missing_patterns+=("$pattern")
+                fi
+                ;;
+        esac
     done
     
     if [ ${#missing_patterns[@]} -eq 0 ]; then
