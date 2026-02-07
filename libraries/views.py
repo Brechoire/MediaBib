@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Count
 from django.http import Http404
-from django.shortcuts import get_object_or_404
+
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
@@ -83,13 +83,13 @@ class LibraryCreateView(LoginRequiredMixin, SuperAdminRequiredMixin, CreateView)
         return context
 
     def form_valid(self, form):
-        """Sauvegarde le formulaire et stocke le mot de passe en clair pour affichage."""
+        """Sauvegarde et stocke le mot de passe en clair pour affichage."""
         # Récupérer le mot de passe avant qu'il ne soit hashé
         password = form.cleaned_data.get("password1")
 
         response = super().form_valid(form)
 
-        # Stocker le mot de passe en clair dans la session pour l'afficher une seule fois
+        # Stocker le mot de passe en clair dans la session
         if password:
             self.request.session["generated_password"] = password
 
@@ -162,7 +162,7 @@ class LibraryUpdateView(LibraryAdminRequiredMixin, UpdateView):
         response = super().form_valid(form)
         messages.success(
             self.request,
-            f"Les informations de '{self.object.name}' ont été mises à jour avec succès !",
+            f"'{self.object.name}' a été mis à jour avec succès !",
         )
         return response
 

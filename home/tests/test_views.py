@@ -22,7 +22,7 @@ class TestHomeView:
         assert response.url == reverse("accounts:setup")
 
     def test_home_shows_welcome_when_users_exist(self, client) -> None:
-        """Test que l'accueil affiche la page de bienvenue si des utilisateurs existent."""
+        """Test que l'accueil affiche la page si des utilisateurs existent."""
         User.objects.create_user(
             email="user@test.com", password="TestPass123!", role="reader"
         )

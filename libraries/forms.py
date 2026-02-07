@@ -2,8 +2,6 @@
 Formulaires de l'app libraries.
 """
 
-from typing import Any
-
 from django import forms
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
@@ -21,9 +19,7 @@ class LibraryCreateForm(forms.ModelForm):
         label=_("Mot de passe"),
         strip=False,
         widget=forms.PasswordInput(attrs={"placeholder": "Mot de passe"}),
-        help_text=_(
-            "Le mot de passe sera utilisé pour le compte administrateur de la médiathèque."
-        ),
+        help_text=_("Mot de passe pour le compte administrateur de la médiathèque."),
     )
     password2 = forms.CharField(
         label=_("Confirmation du mot de passe"),
@@ -89,7 +85,10 @@ class LibraryUpdateForm(forms.ModelForm):
             "city": forms.TextInput(attrs={"placeholder": "Paris"}),
             "is_active": forms.CheckboxInput(
                 attrs={
-                    "class": "w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                    "class": (
+                        "w-4 h-4 text-primary-600 border-gray-300 "
+                        "rounded focus:ring-primary-500"
+                    )
                 }
             ),
         }

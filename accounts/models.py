@@ -32,7 +32,7 @@ class CustomUserManager(BaseUserManager):
     def create_superuser(
         self, email: str, password: str | None = None, **extra_fields: Any
     ) -> "CustomUser":
-        """Crée et sauvegarde un superutilisateur avec l'email et le mot de passe donnés."""
+        """Crée et sauvegarde un superutilisateur avec email et mot de passe donnés."""
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("role", "superadmin")

@@ -3,7 +3,6 @@ Tests du modèle Library.
 """
 
 import pytest
-from django.core.exceptions import ValidationError
 
 from libraries.models import Library
 

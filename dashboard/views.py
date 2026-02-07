@@ -91,7 +91,7 @@ class DashboardIndexView(DashboardAccessMixin, TemplateView):
         return context
 
     def _get_superadmin_context(self) -> dict[str, Any]:
-        """Prépare le contexte pour le dashboard superadmin avec optimisation des requêtes."""
+        """Prépare le contexte superadmin avec optimisation des requêtes."""
         # Requête unique pour toutes les statistiques utilisateurs
         user_stats = User.objects.aggregate(
             total_users=Count("id"),

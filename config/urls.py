@@ -2,9 +2,6 @@
 URLs de l'app config.
 """
 
-from django.urls import path
-
-
 app_name = "config"
 
 urlpatterns = [

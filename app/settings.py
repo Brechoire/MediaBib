@@ -54,7 +54,7 @@ LOGOUT_REDIRECT_URL = "/"
 MIDDLEWARE = [
     "django.middleware.gzip.GZipMiddleware",  # Compression GZip
     "django.middleware.security.SecurityMiddleware",
-    # "whitenoise.middleware.WhiteNoiseMiddleware",  # Désactivé - servir fichiers statiques en prod
+    # "whitenoise.middleware.WhiteNoiseMiddleware",  # Désactivé - fichiers statiques
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",

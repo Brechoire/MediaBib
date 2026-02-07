@@ -8,7 +8,7 @@ from .models import SiteConfig
 
 
 def site_config(request):
-    """Ajoute la configuration du site au contexte de toutes les requêtes (avec cache)."""
+    """Ajoute la configuration du site au contexte (avec cache)."""
     cache_key = "site_config"
     config = cache.get(cache_key)
 

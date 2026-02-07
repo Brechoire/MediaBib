@@ -15,7 +15,7 @@ class TestSuperAdminRegistration:
     """Tests de l'inscription du premier superadmin."""
 
     def test_setup_page_renders_when_no_users(self, client) -> None:
-        """Test que la page d'inscription s'affiche quand il n'y a pas d'utilisateurs."""
+        """Test que la page s'affiche quand il n'y a pas d'utilisateurs."""
         response = client.get(reverse("accounts:setup"))
 
         assert response.status_code == 200
