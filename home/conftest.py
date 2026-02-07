@@ -2,6 +2,7 @@
 
 import os
 import sys
+
 import django
 
 # Add the project directory to the sys.path
