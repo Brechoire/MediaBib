@@ -3,6 +3,7 @@ Tests du modèle Library.
 """
 
 import pytest
+from django.db import IntegrityError
 
 from libraries.models import Library
 
@@ -39,7 +40,7 @@ class TestLibraryModel:
         """Test que l'email doit être unique."""
         Library.objects.create(name="Première Médiathèque", email="test@example.com")
 
-        with pytest.raises(Exception):  # IntegrityError
+        with pytest.raises(IntegrityError):
             Library.objects.create(
                 name="Deuxième Médiathèque", email="test@example.com"
             )

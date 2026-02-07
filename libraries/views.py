@@ -123,11 +123,13 @@ class LibraryUpdateView(LibraryAdminRequiredMixin, UpdateView):
         obj = super().get_object(queryset)
 
         # Vérifier que le library admin ne modifie que sa propre médiathèque
-        if not self.request.user.is_superadmin:
-            if obj.pk != self.request.user.library_id:
-                raise Http404(
-                    "Vous n'avez pas la permission de modifier cette médiathèque."
-                )
+        if (
+            not self.request.user.is_superadmin
+            and obj.pk != self.request.user.library_id
+        ):
+            raise Http404(
+                "Vous n'avez pas la permission de modifier cette médiathèque."
+            )
 
         return obj
 
