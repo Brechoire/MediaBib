@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Configuration initiale - MediaBibli{% endblock %}
+
+{% block content %}
+<h1>Configuration de MediaBibli</h1>
+
+<p>Bienvenue ! Vous êtes sur le point de créer le compte superadministrateur. Ce compte aura le contrôle total du système.</p>
+
+<form method="post">
+    {% csrf_token %}
+    
+    {% if form.errors %}
+        <div class="errors">
+            <p>Veuillez corriger les erreurs ci-dessous :</p>
+            {{ form.errors }}
+        </div>
+    {% endif %}
+    
+    <div>
+        <label for="id_email">Adresse email :</label>
+        {{ form.email }}
+        {% if form.email.errors %}
+            <span class="error">{{ form.email.errors }}</span>
+        {% endif %}
+    </div>
+    
+    <div>
+        <label for="id_first_name">Prénom :</label>
+        {{ form.first_name }}
+        {% if form.first_name.errors %}
+            <span class="error">{{ form.first_name.errors }}</span>
+        {% endif %}
+    </div>
+    
+    <div>
+        <label for="id_last_name">Nom :</label>
+        {{ form.last_name }}
+        {% if form.last_name.errors %}
+            <span class="error">{{ form.last_name.errors }}</span>
+        {% endif %}
+    </div>
+    
+    <div>
+        <label for="id_password1">Mot de passe :</label>
+        {{ form.password1 }}
+        {% if form.password1.errors %}
+            <span class="error">{{ form.password1.errors }}</span>
+        {% endif %}
+        <small>Le mot de passe doit contenir au moins 8 caractères.</small>
+    </div>
+    
+    <div>
+        <label for="id_password2">Confirmation du mot de passe :</label>
+        {{ form.password2 }}
+        {% if form.password2.errors %}
+            <span class="error">{{ form.password2.errors }}</span>
+        {% endif %}
+    </div>
+    
+    <button type="submit">Créer le compte superadmin</button>
+</form>
+{% endblock %}

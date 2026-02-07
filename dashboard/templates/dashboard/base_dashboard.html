@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title|default:"Tableau de bord" }} - {{ site_config.site_name|default:"MediaBibli" }}{% endblock %}
+
+{% block body %}
+
+{# Skip link spécifique au dashboard #}
+<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-primary-600 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">
+    Aller au contenu principal
+</a>
+
+<div class="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-900">
+    
+    {# Sidebar #}
+    {% include 'components/sidebar.html' %}
+    
+    {# Contenu principal #}
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden lg:ml-64">
+        
+        {# Header #}
+        {% include 'components/header.html' %}
+        
+        {# Zone de contenu scrollable #}
+        <main id="main-content" class="flex-1 overflow-y-auto p-4 lg:p-6" tabindex="-1">
+            
+            {# Breadcrumb mobile #}
+            <div class="lg:hidden mb-4">
+                {% block breadcrumb_mobile %}{% endblock %}
+            </div>
+            
+            {# Titre de page #}
+            {% block page_header %}
+            <div class="mb-6">
+                <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">{{ page_title|default:"Tableau de bord" }}</h1>
+                
+                {% if page_subtitle %}
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ page_subtitle }}</p>
+                {% endif %}
+            </div>
+            {% endblock %}
+            
+            {# Messages flash #}
+            {% if messages %}
+            <div class="mb-6 space-y-2" role="alert" aria-live="polite">
+                {% for message in messages %}
+                <div class="flex items-center p-4 rounded-lg {% if message.tags == 'success' %}bg-green-50 text-green-800 dark:bg-green-900/20 dark:text-green-300{% elif message.tags == 'error' %}bg-red-50 text-red-800 dark:bg-red-900/20 dark:text-red-300{% elif message.tags == 'warning' %}bg-yellow-50 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300{% else %}bg-blue-50 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300{% endif %}">
+                    <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        {% if message.tags == 'success' %}
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        {% elif message.tags == 'error' %}
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        {% elif message.tags == 'warning' %}
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        {% else %}
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        {% endif %}
+                    </svg>
+                    <span>{{ message }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            {# Contenu spécifique de la page #}
+            {% block dashboard_content %}{% endblock %}
+            
+        </main>
+        
+        {# Footer minimal #}
+        <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-4 px-4 lg:px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+                <p>&copy; {% now "Y" %} {{ site_config.site_name|default:"MediaBibli" }}. Tous droits réservés.</p>
+                
+                <div class="flex items-center space-x-4 mt-2 md:mt-0">
+                    <a href="#" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Aide</a>
+                    <span aria-hidden="true">|</span>
+                    <a href="#" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Confidentialité</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Toggle sidebar mobile
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', () => {
+            const isExpanded = sidebarToggle.getAttribute('aria-expanded') === 'true';
+            sidebarToggle.setAttribute('aria-expanded', !isExpanded);
+            sidebarToggle.setAttribute('aria-label', isExpanded ? 'Ouvrir le menu' : 'Fermer le menu');
+            
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        });
+    }
+    
+    if (overlay) {
+        overlay.addEventListener('click', () => {
+            sidebarToggle?.setAttribute('aria-expanded', 'false');
+            sidebarToggle?.setAttribute('aria-label', 'Ouvrir le menu');
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+        });
+    }
+    
+    // Toggle dark mode
+    const themeToggle = document.getElementById('theme-toggle');
+    const lightIcon = document.getElementById('theme-toggle-light-icon');
+    const darkIcon = document.getElementById('theme-toggle-dark-icon');
+    
+    function updateThemeIcons() {
+        if (document.documentElement.classList.contains('dark')) {
+            lightIcon.classList.remove('hidden');
+            darkIcon.classList.add('hidden');
+        } else {
+            lightIcon.classList.add('hidden');
+            darkIcon.classList.remove('hidden');
+        }
+    }
+    
+    // Initialize icons
+    updateThemeIcons();
+    
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            
+            if (document.documentElement.classList.contains('dark')) {
+                localStorage.theme = 'dark';
+            } else {
+                localStorage.theme = 'light';
+            }
+            
+            updateThemeIcons();
+        });
+    }
+    
+    // Toggle user dropdown
+    const userMenuButton = document.getElementById('user-menu-button');
+    const userDropdown = document.getElementById('user-dropdown');
+    
+    if (userMenuButton && userDropdown) {
+        userMenuButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isExpanded = userMenuButton.getAttribute('aria-expanded') === 'true';
+            userMenuButton.setAttribute('aria-expanded', !isExpanded);
+            userDropdown.classList.toggle('hidden');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
+                userMenuButton.setAttribute('aria-expanded', 'false');
+                userDropdown.classList.add('hidden');
+            }
+        });
+        
+        // Close dropdown with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !userDropdown.classList.contains('hidden')) {
+                userMenuButton.setAttribute('aria-expanded', 'false');
+                userDropdown.classList.add('hidden');
+                userMenuButton.focus();
+            }
+        });
+    }
+    
+    // Toggle accordion menus
+    const accordionButtons = document.querySelectorAll('[aria-controls^="submenu-"]');
+    
+    accordionButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const isExpanded = button.getAttribute('aria-expanded') === 'true';
+            const submenuId = button.getAttribute('aria-controls');
+            const submenu = document.getElementById(submenuId);
+            const arrow = button.querySelector('svg:last-child');
+            
+            // Toggle aria-expanded
+            button.setAttribute('aria-expanded', !isExpanded);
+            
+            // Toggle submenu visibility with animation
+            if (isExpanded) {
+                // Fermer
+                submenu.style.opacity = '0';
+                submenu.style.transform = 'translateY(-8px)';
+                setTimeout(() => {
+                    submenu.style.display = 'none';
+                }, 150);
+            } else {
+                // Ouvrir
+                submenu.style.display = 'block';
+                // Force reflow
+                submenu.offsetHeight;
+                submenu.style.opacity = '1';
+                submenu.style.transform = 'translateY(0)';
+            }
+            
+            // Rotate arrow
+            if (arrow) {
+                arrow.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(90deg)';
+            }
+        });
+    });
+    
+    // Initialize submenus state based on aria-expanded
+    accordionButtons.forEach(button => {
+        const isExpanded = button.getAttribute('aria-expanded') === 'true';
+        const submenuId = button.getAttribute('aria-controls');
+        const submenu = document.getElementById(submenuId);
+        const arrow = button.querySelector('svg:last-child');
+        
+        if (submenu) {
+            if (isExpanded) {
+                submenu.style.display = 'block';
+                submenu.style.opacity = '1';
+                submenu.style.transform = 'translateY(0)';
+                submenu.style.transition = 'opacity 0.2s ease-out, transform 0.2s ease-out';
+                if (arrow) arrow.style.transform = 'rotate(90deg)';
+            } else {
+                submenu.style.display = 'none';
+                submenu.style.opacity = '0';
+                submenu.style.transform = 'translateY(-8px)';
+                submenu.style.transition = 'opacity 0.15s ease-in, transform 0.15s ease-in';
+                if (arrow) arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+    });
+</script>
+{% endblock %}

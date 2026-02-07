@@ -1,0 +1,29 @@
+{% comment %}
+Composant Breadcrumbs - Fil d'Ariane RGAA
+Usage: {% include 'components/breadcrumbs.html' with items=breadcrumb_items %}
+{% endcomment %}
+
+<nav aria-label="Fil d'ariane" class="mb-4">
+    <ol class="flex flex-wrap items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+        <li>
+            <a href="{% url 'home' %}" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                Accueil
+            </a>
+        </li>
+        
+        {% if items %}
+            {% for item in items %}
+            <li aria-hidden="true" class="text-gray-400 dark:text-gray-600">/</li>
+            <li>
+                {% if item.url %}
+                <a href="{{ item.url }}" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                    {{ item.label }}
+                </a>
+                {% else %}
+                <span aria-current="page" class="text-gray-900 dark:text-gray-100 font-medium">{{ item.label }}</span>
+                {% endif %}
+            </li>
+            {% endfor %}
+        {% endif %}
+    </ol>
+</nav>

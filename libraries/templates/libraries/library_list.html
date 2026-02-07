@@ -1,0 +1,369 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block title %}Liste des médiathèques - {{ block.super }}{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'components/breadcrumbs.html' with items=breadcrumb_items %}
+{% endblock %}
+
+{% block page_header %}
+<div class="mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Liste des médiathèques</h1>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                Gérez les médiathèques de votre réseau
+            </p>
+        </div>
+        
+        <a href="{% url 'libraries:create' %}" 
+           class="inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-800 transition-colors shadow-sm">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Nouvelle médiathèque
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block dashboard_content %}
+
+{# Stats rapides #}
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 flex items-center">
+        <div class="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+            <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
+        </div>
+        <div class="ml-4">
+            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ libraries|length }}</p>
+        </div>
+    </div>
+    
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 flex items-center">
+        <div class="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
+            <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+        </div>
+        <div class="ml-4">
+            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Actives</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ libraries|length }}</p>
+        </div>
+    </div>
+    
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 flex items-center">
+        <div class="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+            <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+        </div>
+        <div class="ml-4">
+            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Récemment ajoutées</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ libraries|length }}</p>
+        </div>
+    </div>
+</div>
+
+{# Barre de recherche #}
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-6">
+    <div class="relative max-w-2xl mx-auto">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+        </div>
+        <input type="text" 
+               id="library-search" 
+               class="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:placeholder-gray-400 dark:focus:placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 sm:text-sm" 
+               placeholder="Rechercher une médiathèque par nom, ville ou email..."
+               autocomplete="off">
+        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+            <span id="result-count" class="text-sm text-gray-400 dark:text-gray-500"></span>
+        </div>
+    </div>
+</div>
+
+{# Tableau des médiathèques #}
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    {% if libraries %}
+    <div class="overflow-x-auto">
+        <table class="w-full text-left" id="libraries-table">
+            <thead class="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
+                <tr>
+                    <th scope="col" class="px-6 py-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                            Médiathèque
+                        </div>
+                    </th>
+                    <th scope="col" class="px-6 py-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                            Contact
+                        </div>
+                    </th>
+                    <th scope="col" class="px-6 py-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            Localisation
+                        </div>
+                    </th>
+                    <th scope="col" class="px-6 py-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Statut
+                    </th>
+                    <th scope="col" class="px-6 py-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Créée le
+                    </th>
+                    <th scope="col" class="px-6 py-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-right">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                {% for library in libraries %}
+                <tr class="library-row hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors cursor-pointer"
+                    data-library-name="{{ library.name|lower }}"
+                    data-library-city="{{ library.city|default:''|lower }}"
+                    data-library-email="{{ library.email|lower }}"
+                    onclick="window.location.href='{% url 'libraries:detail' library.pk %}'"
+                    title="Cliquer pour voir les détails de {{ library.name }}">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center">
+                                <span class="text-primary-600 dark:text-primary-400 font-semibold text-sm">
+                                    {{ library.name|first|upper }}
+                                </span>
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                                    {{ library.name }}
+                                </div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">
+                                    ID: #{{ library.id }}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm text-gray-900 dark:text-white">{{ library.email }}</div>
+                        {% if library.phone %}
+                        <div class="text-sm text-gray-500 dark:text-gray-400">{{ library.phone }}</div>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm text-gray-900 dark:text-white">
+                            {{ library.city|default:"Non renseignée" }}
+                        </div>
+                        {% if library.postal_code %}
+                        <div class="text-sm text-gray-500 dark:text-gray-400">{{ library.postal_code }}</div>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if library.is_active %}
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                            <span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></span>
+                            Active
+                        </span>
+                        {% else %}
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">
+                            <span class="w-1.5 h-1.5 bg-red-500 rounded-full mr-1.5"></span>
+                            Inactive
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm text-gray-900 dark:text-white">{{ library.created_at|date:"d/m/Y" }}</div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400">{{ library.created_at|date:"H:i" }}</div>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <a href="{% url 'libraries:update' library.pk %}" 
+                           class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-primary-700 bg-primary-100 rounded-md hover:bg-primary-200 dark:bg-primary-900/30 dark:text-primary-300 dark:hover:bg-primary-900/50 transition-colors"
+                           onclick="event.stopPropagation();">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
+                            Modifier
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    {# Pagination simple (placeholder) #}
+    <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/30 flex items-center justify-between">
+        <div class="text-sm text-gray-500 dark:text-gray-400">
+            Affichage de <span class="font-medium">{{ libraries|length }}</span> médiathèque{{ libraries|length|pluralize }}
+        </div>
+        <div class="flex items-center space-x-2">
+            <button class="px-3 py-1.5 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-600 disabled:opacity-50" disabled>
+                Précédent
+            </button>
+            <button class="px-3 py-1.5 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-600 disabled:opacity-50" disabled>
+                Suivant
+            </button>
+        </div>
+    </div>
+    
+    {% else %}
+    {# État vide #}
+    <div class="text-center py-12 px-6">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full mb-4">
+            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Aucune médiathèque</h3>
+        <p class="text-gray-500 dark:text-gray-400 mb-6 max-w-md mx-auto">
+            Vous n'avez pas encore créé de médiathèque. Commencez par en créer une pour permettre à vos lecteurs d'accéder à votre catalogue.
+        </p>
+        <a href="{% url 'libraries:create' %}" 
+           class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Créer la première médiathèque
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('library-search');
+    const resultCount = document.getElementById('result-count');
+    const table = document.getElementById('libraries-table');
+    const rows = table.querySelectorAll('.library-row');
+    const totalCount = rows.length;
+    
+    // Mettre à jour le compteur initial
+    updateResultCount(totalCount, totalCount);
+    
+    // Fonction de recherche
+    function filterLibraries() {
+        const searchTerm = searchInput.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        let visibleCount = 0;
+        
+        rows.forEach(function(row) {
+            const name = row.getAttribute('data-library-name').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            const city = row.getAttribute('data-library-city').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            const email = row.getAttribute('data-library-email');
+            
+            // Recherche dans le nom, la ville ou l'email
+            const isMatch = name.includes(searchTerm) || 
+                           city.includes(searchTerm) || 
+                           email.includes(searchTerm);
+            
+            if (isMatch) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        updateResultCount(visibleCount, totalCount);
+        
+        // Afficher un message si aucun résultat
+        updateNoResultsMessage(visibleCount === 0);
+    }
+    
+    // Mettre à jour l'affichage du compteur
+    function updateResultCount(visible, total) {
+        if (visible === total) {
+            resultCount.textContent = `${total} médiathèque${total > 1 ? 's' : ''}`;
+        } else {
+            resultCount.textContent = `${visible} / ${total}`;
+        }
+    }
+    
+    // Gérer le message "Aucun résultat"
+    function updateNoResultsMessage(show) {
+        const existingNoResults = table.querySelector('.no-results-row');
+        
+        if (show) {
+            if (!existingNoResults) {
+                const tbody = table.querySelector('tbody');
+                const noResultsRow = document.createElement('tr');
+                noResultsRow.className = 'no-results-row';
+                noResultsRow.innerHTML = `
+                    <td colspan="6" class="px-6 py-12 text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full mb-4">
+                            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Aucune médiathèque trouvée</h3>
+                        <p class="text-gray-500 dark:text-gray-400">
+                            Aucune médiathèque ne correspond à votre recherche "<strong>${searchInput.value}</strong>".
+                        </p>
+                    </td>
+                `;
+                tbody.appendChild(noResultsRow);
+            }
+        } else {
+            if (existingNoResults) {
+                existingNoResults.remove();
+            }
+        }
+    }
+    
+    // Écouteur d'événement pour la recherche
+    searchInput.addEventListener('input', filterLibraries);
+    
+    // Navigation clavier : permettre de naviguer avec les flèches
+    let selectedRowIndex = -1;
+    const visibleRows = () => Array.from(rows).filter(row => row.style.display !== 'none');
+    
+    searchInput.addEventListener('keydown', function(e) {
+        const rows = visibleRows();
+        
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            selectedRowIndex = Math.min(selectedRowIndex + 1, rows.length - 1);
+            highlightRow(rows);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            selectedRowIndex = Math.max(selectedRowIndex - 1, -1);
+            if (selectedRowIndex === -1) {
+                searchInput.focus();
+            } else {
+                highlightRow(rows);
+            }
+        } else if (e.key === 'Enter' && selectedRowIndex >= 0) {
+            e.preventDefault();
+            const selectedRow = rows[selectedRowIndex];
+            const detailUrl = selectedRow.getAttribute('onclick').match(/'([^']+)'/)[1];
+            window.location.href = detailUrl;
+        }
+    });
+    
+    function highlightRow(rows) {
+        rows.forEach((row, index) => {
+            if (index === selectedRowIndex) {
+                row.classList.add('bg-primary-50', 'dark:bg-primary-900/20');
+                row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else {
+                row.classList.remove('bg-primary-50', 'dark:bg-primary-900/20');
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

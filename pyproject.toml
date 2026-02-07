@@ -4,8 +4,7 @@ DJANGO_SETTINGS_MODULE = "app.settings"
 python_files = ["test_*.py", "*_test.py", "tests.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-testpaths = ["."]
-# Allow pytest to pass with no tests collected (important for CI)
+testpaths = ["accounts/tests", "libraries/tests", "config/tests", "home/tests"]
 addopts = [
     "-v",
     "--tb=short",
@@ -13,6 +12,11 @@ addopts = [
     "--ignore=env",
     "--ignore=.venv",
     "-p no:warnings",
+]
+markers = [
+    "slow: marks tests as slow",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
 ]
 
 [build-system]
@@ -22,3 +26,96 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "mediabib"
 version = "0.1.0"
+
+[tool.coverage.run]
+source = ["accounts", "libraries", "config", "home"]
+omit = [
+    "*/tests/*",
+    "*/migrations/*",
+    "*/venv/*",
+    "*/env/*",
+    "*/__pycache__/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
+fail_under = 80
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | env
+  | build
+  | dist
+  | migrations
+)/
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+known_first_party = ["accounts", "libraries", "config", "home"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = false
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+show_error_codes = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = "*.migrations.*"
+ignore_errors = true
+
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+select = [
+    "E",
+    "W",
+    "F",
+    "I",
+    "N",
+    "UP",
+    "B",
+    "C4",
+    "SIM",
+]
+ignore = ["E501", "W503"]
+
+[tool.ruff.pydocstyle]
+convention = "google"
+
+[tool.ruff.per-file-ignores]
+"tests/*" = ["S101"]
+"__init__.py" = ["F401"]

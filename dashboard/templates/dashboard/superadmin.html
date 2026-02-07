@@ -1,0 +1,174 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block title %}Tableau de bord Superadmin - {{ block.super }}{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'components/breadcrumbs.html' with items=breadcrumb_items %}
+{% endblock %}
+
+{% block page_header %}
+<div class="mb-6">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Tableau de bord</h1>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                Vue d'ensemble de votre réseau de médiathèques
+            </p>
+        </div>
+        
+        <a href="{% url 'libraries:create' %}" 
+           class="inline-flex items-center px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Nouvelle médiathèque
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block dashboard_content %}
+
+{# Cards statistiques #}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    
+    {# Card - Utilisateurs #}
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Utilisateurs</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ total_users }}</p>
+            </div>
+        </div>
+        <div class="mt-4 flex items-center text-sm">
+            <span class="text-green-600 dark:text-green-400 flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                </svg>
+                Actifs
+            </span>
+            <span class="ml-2 text-gray-500 dark:text-gray-400">{{ active_users }}</span>
+        </div>
+    </div>
+    
+    {# Card - Médiathèques #}
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-lg bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                </svg>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Médiathèques</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ total_libraries }}</p>
+            </div>
+        </div>
+        <div class="mt-4 flex items-center text-sm">
+            <span class="text-green-600 dark:text-green-400 flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                </svg>
+                Actives
+            </span>
+            <span class="ml-2 text-gray-500 dark:text-gray-400">{{ active_libraries }}</span>
+        </div>
+    </div>
+    
+    {# Card - Lecteurs #}
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                </svg>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Lecteurs</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ total_readers }}</p>
+            </div>
+        </div>
+        <div class="mt-4 text-sm text-gray-500 dark:text-gray-400">
+            Dans toutes les médiathèques
+        </div>
+    </div>
+    
+    {# Card - Admins #}
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-lg bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                </svg>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Administrateurs</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ total_library_admins }}</p>
+            </div>
+        </div>
+        <div class="mt-4 text-sm text-gray-500 dark:text-gray-400">
+            Gestionnaires de médiathèques
+        </div>
+    </div>
+</div>
+
+{# Tableau des médiathèques récentes #}
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Médiathèques récentes</h2>
+        
+        <a href="{% url 'libraries:list' %}" class="text-sm text-primary-600 dark:text-primary-400 hover:underline">
+            Voir tout →
+        </a>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+            <thead class="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400">
+                <tr>
+                    <th class="px-6 py-3 font-medium">Nom</th>
+                    <th class="px-6 py-3 font-medium">Ville</th>
+                    <th class="px-6 py-3 font-medium">Email</th>
+                    <th class="px-6 py-3 font-medium">Statut</th>
+                    <th class="px-6 py-3 font-medium">Créée le</th>
+                </tr>
+            </thead>
+            
+            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                {% for library in recent_libraries %}
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
+                    <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ library.name }}</td>
+                    <td class="px-6 py-4 text-gray-600 dark:text-gray-300">{{ library.city|default:"-" }}</td>
+                    <td class="px-6 py-4 text-gray-600 dark:text-gray-300">{{ library.email }}</td>
+                    <td class="px-6 py-4">
+                        {% if library.is_active %}
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                            Active
+                        </span>
+                        {% else %}
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">
+                            Inactive
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-gray-600 dark:text-gray-300">{{ library.created_at|date:"d/m/Y" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                        Aucune médiathèque n'a été créée.
+                        <a href="{% url 'libraries:create' %}" class="text-primary-600 dark:text-primary-400 hover:underline">Créer la première médiathèque →</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

@@ -237,6 +237,30 @@ pip install djangorestframework django-filter djangorestframework-simplejwt drf-
 
 ---
 
+### 📜 javascript-modern
+
+**Objectif** : Maîtriser les fonctionnalités de JavaScript moderne (ES2024/ES2025) pour écrire du code performant et maintenable.
+
+**Quand l'utiliser** :
+- Développement frontend moderne (React, Vue, Vanilla JS)
+- Applications Node.js
+- Migration de code legacy
+- Optimisation de performances
+
+**Installation rapide** :
+```bash
+# Vérifier Node.js
+node --version  # >= 18.x recommandé
+
+# ESLint avec support ES2024
+npm install --save-dev eslint @eslint/js
+```
+
+**Documentation** : [skills/javascript-modern/SKILL.md](javascript-modern/SKILL.md)  
+**Démarrage rapide** : [skills/javascript-modern/QUICKSTART.md](javascript-modern/QUICKSTART.md)
+
+---
+
 ### 📋 git-workflow
 
 **Objectif** : Standardiser l'utilisation de Git avec Conventional Commits, stratégies de branches et revues de code.

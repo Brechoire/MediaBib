@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Espace Lecteur - {{ site_config.site_name|default:"MediaBibli" }}{% endblock %}
+
+{% block body %}
+
+<div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
+    <div class="max-w-md w-full text-center">
+        
+        {# Icône livre #}
+        <div class="mx-auto w-20 h-20 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center mb-6">
+            <svg class="w-10 h-10 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+            </svg>
+        </div>
+        
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            Espace Lecteur
+        </h1>
+        
+        <p class="text-gray-600 dark:text-gray-300 mb-6">
+            Cet espace est en cours de développement.
+        </p>
+        
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
+            <svg class="w-12 h-12 mx-auto text-yellow-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+            </svg>
+            
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Bientôt disponible</h2>
+            
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+                Vous pourrez bientôt consulter vos emprunts, réserver des documents et gérer votre profil directement en ligne.
+            </p>
+        </div>
+        
+        <div class="space-y-3">
+            <form method="post" action="{% url 'accounts:logout' %}" class="block">
+                {% csrf_token %}
+                <button type="submit"
+                        class="w-full px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                    Se déconnecter
+                </button>
+            </form>
+            
+            <a href="{% url 'accounts:password_change' %}"
+               class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                Changer mon mot de passe
+            </a>
+        </div>
+        
+        <p class="mt-8 text-xs text-gray-400 dark:text-gray-500">
+            &copy; {% now "Y" %} {{ site_config.site_name|default:"MediaBibli" }}
+        </p>
+    </div>
+</div>
+
+{% endblock %}

@@ -37,11 +37,24 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "accounts",
+    "libraries",
+    "config",
+    "dashboard",
     "home",
 ]
 
+# Configuration du modèle utilisateur personnalisé
+AUTH_USER_MODEL = "accounts.CustomUser"
+
+# Configuration des redirections après connexion/déconnexion
+LOGIN_REDIRECT_URL = "/dashboard/"
+LOGOUT_REDIRECT_URL = "/"
+
 MIDDLEWARE = [
+    "django.middleware.gzip.GZipMiddleware",  # Compression GZip
     "django.middleware.security.SecurityMiddleware",
+    # "whitenoise.middleware.WhiteNoiseMiddleware",  # Désactivé - servir fichiers statiques en prod
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -62,6 +75,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "config.context_processors.site_config",
             ],
         },
     },
@@ -77,6 +91,14 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
+
+# Cache configuration (utilise la base de données SQLite)
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        "LOCATION": "django_cache_table",
     }
 }
 
@@ -118,3 +140,24 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = "static/"
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+# Media files (uploads)
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
+# Whitenoise configuration (sert les fichiers statiques en production)
+# STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+
+# GZip compression settings
+GZIP_CONTENT_TYPES = [
+    "text/html",
+    "text/css",
+    "text/javascript",
+    "application/javascript",
+    "application/json",
+    "application/xml",
+]

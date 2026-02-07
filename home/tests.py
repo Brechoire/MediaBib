@@ -8,7 +8,7 @@ class HomeViewTests(TestCase):
     def setUp(self):
         self.client = Client()
 
-    def test_home_view_status_code(self):
+    def test_home_view_status_code(self) -> None:
         """Test que la page d'accueil retourne un code 200."""
         response = self.client.get(reverse("home"))
         self.assertEqual(response.status_code, 200)

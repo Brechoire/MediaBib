@@ -1,0 +1,149 @@
+{% comment %}
+Composant Header - Barre de navigation supérieure
+Usage: {% include 'components/header.html' %}
+{% endcomment %}
+
+<header role="banner" class="sticky top-0 z-30 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+    <div class="flex items-center justify-between h-16 px-4 lg:px-6">
+        
+        {# Bouton menu mobile + Breadcrumb #}
+        <div class="flex items-center flex-1 min-w-0">
+            {# Bouton toggle sidebar (mobile) #}
+            <button type="button" 
+                    id="sidebar-toggle"
+                    class="lg:hidden p-2 mr-3 text-gray-500 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    aria-controls="sidebar" 
+                    aria-expanded="false"
+                    aria-label="Ouvrir le menu">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            
+            {# Breadcrumb - desktop #}
+            <div class="hidden lg:block flex-1 min-w-0">
+                {% block breadcrumb %}{% endblock %}
+            </div>
+        </div>
+        
+        {# Actions à droite #}
+        <div class="flex items-center space-x-3">
+            
+            {# Barre de recherche #}
+            <div class="hidden md:flex items-center">
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <input type="search" 
+                           id="search"
+                           class="block w-full p-2.5 pl-10 text-sm text-gray-900 bg-gray-50 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 transition-colors"
+                           placeholder="Rechercher..."
+                           aria-label="Rechercher">
+                </div>
+            </div>
+            
+            {# Toggle Dark Mode #}
+            <button type="button"
+                    id="theme-toggle"
+                    class="p-2 text-gray-500 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    aria-label="Changer le thème">
+                {# Icon soleil (light mode) #}
+                <svg id="theme-toggle-light-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                    <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"></path>
+                </svg>
+                {# Icon lune (dark mode) #}
+                <svg id="theme-toggle-dark-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                </svg>
+            </button>
+            
+            {# Notifications #}
+            <button type="button"
+                    class="p-2 text-gray-500 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 relative"
+                    aria-label="Notifications">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                </svg>
+                {# Badge notification (placeholder) #}
+                <span class="absolute top-1.5 right-1.5 flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                </span>
+            </button>
+            
+            {# Menu utilisateur #}
+            <div class="relative" x-data="{ open: false }">
+                <button type="button"
+                        id="user-menu-button"
+                        class="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        aria-expanded="false"
+                        aria-haspopup="true"
+                        aria-label="Menu utilisateur">
+                    <span class="sr-only">Ouvrir le menu utilisateur</span>
+                    <div class="flex items-center space-x-2 p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        {# Avatar placeholder #}
+                        <div class="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-400 font-medium">
+                            {{ user.first_name|first|default:user.email|first|upper }}
+                        </div>
+                        <div class="hidden md:block text-left">
+                            <p class="text-sm font-medium text-gray-900 dark:text-white truncate max-w-[120px]">{{ user.get_full_name|default:user.email }}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[120px]">
+                                {% if user.is_superadmin %}Superadmin
+                                {% elif user.is_library_admin %}Admin Médiathèque
+                                {% else %}Lecteur{% endif %}
+                            </p>
+                        </div>
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                </button>
+                
+                {# Dropdown menu #}
+                <div id="user-dropdown"
+                     class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50"
+                     role="menu"
+                     aria-orientation="vertical"
+                     aria-labelledby="user-menu-button">
+                    
+                    {# User info #}
+                    <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ user.get_full_name|default:user.email }}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ user.email }}</p>
+                    </div>
+                    
+                     {% if user.is_library_admin and user.library %}
+                     <a href="{% url 'libraries:update' user.library.pk %}" 
+                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                        role="menuitem">
+                         Modifier ma médiathèque
+                     </a>
+                     {% endif %}
+                     
+                     <a href="{% url 'accounts:password_change' %}" 
+                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                        role="menuitem">
+                         Changer le mot de passe
+                     </a>
+                     
+                     <div class="border-t border-gray-200 dark:border-gray-700"></div>
+                    
+                    <form method="post" action="{% url 'accounts:logout' %}" class="block">
+                        {% csrf_token %}
+                        <button type="submit"
+                                class="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                                role="menuitem">
+                            Se déconnecter
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {# Overlay pour fermer le menu mobile #}
+    <div id="sidebar-overlay" class="fixed inset-0 z-20 bg-gray-900/50 hidden lg:hidden" aria-hidden="true"></div>
+</header>
