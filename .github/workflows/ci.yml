@@ -86,15 +86,7 @@ jobs:
         run: python manage.py migrate
 
       - name: Run tests with coverage
-        run: |
-          # Debug: Check current directory and structure
-          pwd
-          ls -la
-          ls -la home/
-          # Run pytest with explicit verbose output
-          python -m pytest -v --collect-only home/tests.py || true
-          # Run tests with coverage
-          python -m pytest --cov=. --cov-report=xml --cov-report=term || [ $? -eq 5 ]
+        run: pytest --cov=. --cov-report=xml --cov-report=term
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
