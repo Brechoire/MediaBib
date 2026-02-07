@@ -1,4 +1,5 @@
 [tool.pytest.ini_options]
+minversion = "6.0"
 DJANGO_SETTINGS_MODULE = "app.settings"
 python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test*"]
@@ -11,6 +12,7 @@ addopts = [
     "--strict-markers",
     "--ignore=env",
     "--ignore=.venv",
+    "-p no:warnings",
 ]
 
 [build-system]
