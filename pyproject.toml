@@ -3,6 +3,7 @@ DJANGO_SETTINGS_MODULE = "app.settings"
 python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
+testpaths = ["."]
 # Allow pytest to pass with no tests collected (important for CI)
 addopts = [
     "-v",
