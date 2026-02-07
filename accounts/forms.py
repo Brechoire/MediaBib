@@ -24,18 +24,18 @@ class SuperAdminSetupForm(UserCreationForm):
         max_length=150,
         required=True,
         label=_("Prénom"),
-        widget=forms.TextInput(attrs={"placeholder": "Prénom"})
+        widget=forms.TextInput(attrs={"placeholder": "Prénom"}),
     )
     last_name = forms.CharField(
         max_length=150,
         required=True,
         label=_("Nom"),
-        widget=forms.TextInput(attrs={"placeholder": "Nom"})
+        widget=forms.TextInput(attrs={"placeholder": "Nom"}),
     )
     email = forms.EmailField(
         required=True,
         label=_("Adresse email"),
-        widget=forms.EmailInput(attrs={"placeholder": "email@exemple.com"})
+        widget=forms.EmailInput(attrs={"placeholder": "email@exemple.com"}),
     )
 
     class Meta:
@@ -48,10 +48,10 @@ class SuperAdminSetupForm(UserCreationForm):
         user.role = "superadmin"
         user.is_staff = True
         user.is_superuser = True
-        
+
         if commit:
             user.save()
-        
+
         return user
 
 
@@ -60,10 +60,9 @@ class CustomAuthenticationForm(AuthenticationForm):
 
     username = forms.EmailField(
         label=_("Adresse email"),
-        widget=forms.EmailInput(attrs={
-            "placeholder": "email@exemple.com",
-            "autocomplete": "email"
-        })
+        widget=forms.EmailInput(
+            attrs={"placeholder": "email@exemple.com", "autocomplete": "email"}
+        ),
     )
 
 
@@ -73,25 +72,31 @@ class CustomPasswordChangeForm(PasswordChangeForm):
     old_password = forms.CharField(
         label=_("Ancien mot de passe"),
         strip=False,
-        widget=forms.PasswordInput(attrs={
-            "autocomplete": "current-password",
-            "autofocus": True,
-            "placeholder": "Ancien mot de passe"
-        })
+        widget=forms.PasswordInput(
+            attrs={
+                "autocomplete": "current-password",
+                "autofocus": True,
+                "placeholder": "Ancien mot de passe",
+            }
+        ),
     )
     new_password1 = forms.CharField(
         label=_("Nouveau mot de passe"),
         strip=False,
-        widget=forms.PasswordInput(attrs={
-            "autocomplete": "new-password",
-            "placeholder": "Nouveau mot de passe"
-        })
+        widget=forms.PasswordInput(
+            attrs={
+                "autocomplete": "new-password",
+                "placeholder": "Nouveau mot de passe",
+            }
+        ),
     )
     new_password2 = forms.CharField(
         label=_("Confirmation du nouveau mot de passe"),
         strip=False,
-        widget=forms.PasswordInput(attrs={
-            "autocomplete": "new-password",
-            "placeholder": "Confirmez le nouveau mot de passe"
-        })
+        widget=forms.PasswordInput(
+            attrs={
+                "autocomplete": "new-password",
+                "placeholder": "Confirmez le nouveau mot de passe",
+            }
+        ),
     )

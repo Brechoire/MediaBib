@@ -13,6 +13,7 @@ User = get_user_model()
 def client():
     """Fixture pour le client de test Django."""
     from django.test import Client
+
     return Client()
 
 
@@ -24,7 +25,7 @@ def superadmin_user(db):
         password="SuperAdmin123!",
         first_name="Super",
         last_name="Admin",
-        role="superadmin"
+        role="superadmin",
     )
 
 
@@ -36,7 +37,7 @@ def library_admin_user(db):
         password="Library123!",
         first_name="Library",
         last_name="Admin",
-        role="library_admin"
+        role="library_admin",
     )
 
 
@@ -48,5 +49,5 @@ def reader_user(db):
         password="Reader123!",
         first_name="John",
         last_name="Reader",
-        role="reader"
+        role="reader",
     )

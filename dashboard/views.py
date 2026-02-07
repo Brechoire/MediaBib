@@ -26,7 +26,7 @@ class DashboardAccessMixin(LoginRequiredMixin):
         if not request.user.is_authenticated:
             return self.handle_no_permission()
         # Puis vérifie si c'est un lecteur
-        if hasattr(request.user, 'is_reader') and request.user.is_reader:
+        if hasattr(request.user, "is_reader") and request.user.is_reader:
             return render(request, "dashboard/reader_placeholder.html")
         return super().dispatch(request, *args, **kwargs)
 
@@ -39,7 +39,11 @@ class SuperAdminRequiredMixin(LoginRequiredMixin):
         if not request.user.is_superadmin:
             # Redirige vers le dashboard library si c'est un admin de médiothèque
             if request.user.is_library_admin:
-                return render(request, "dashboard/library_admin.html", self.get_library_context(request))
+                return render(
+                    request,
+                    "dashboard/library_admin.html",
+                    self.get_library_context(request),
+                )
             # Redirige les lecteurs
             if request.user.is_reader:
                 return render(request, "dashboard/reader_placeholder.html")
@@ -95,13 +99,13 @@ class DashboardIndexView(DashboardAccessMixin, TemplateView):
             total_readers=Count("id", filter=Q(role="reader")),
             total_library_admins=Count("id", filter=Q(role="library_admin")),
         )
-        
+
         # Requête unique pour les statistiques bibliothèques
         library_stats = Library.objects.aggregate(
             total_libraries=Count("id"),
             active_libraries=Count("id", filter=Q(is_active=True)),
         )
-        
+
         return {
             "page_title": "Tableau de bord",
             "page_subtitle": "Vue d'ensemble de votre réseau de médiathèques",
@@ -117,7 +121,7 @@ class DashboardIndexView(DashboardAccessMixin, TemplateView):
         # Requête unique avec annotation pour le compteur et la liste
         readers_qs = User.objects.filter(library=library, role="reader")
         readers_list = list(readers_qs[:10])
-        
+
         return {
             "page_title": "Ma Médiathèque",
             "breadcrumb_items": [{"label": "Dashboard", "url": None}],

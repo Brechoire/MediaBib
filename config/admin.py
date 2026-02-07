@@ -12,19 +12,10 @@ class SiteConfigAdmin(admin.ModelAdmin):
     """Configuration de l'admin pour SiteConfig."""
 
     fieldsets = (
-        ("Informations générales", {
-            "fields": ("site_name", "site_description")
-        }),
-        ("Contact", {
-            "fields": ("contact_email", "contact_phone", "address")
-        }),
-        ("Apparence", {
-            "fields": ("logo", "favicon", "primary_color")
-        }),
-        ("Maintenance", {
-            "fields": ("maintenance_mode",),
-            "classes": ("collapse",)
-        }),
+        ("Informations générales", {"fields": ("site_name", "site_description")}),
+        ("Contact", {"fields": ("contact_email", "contact_phone", "address")}),
+        ("Apparence", {"fields": ("logo", "favicon", "primary_color")}),
+        ("Maintenance", {"fields": ("maintenance_mode",), "classes": ("collapse",)}),
     )
 
     def has_add_permission(self, request) -> bool:

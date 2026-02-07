@@ -4,7 +4,11 @@ Modèles de l'app accounts.
 
 from typing import Any
 
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    BaseUserManager,
+    PermissionsMixin,
+)
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -13,15 +17,12 @@ class CustomUserManager(BaseUserManager):
     """Manager personnalisé pour le modèle CustomUser."""
 
     def create_user(
-        self,
-        email: str,
-        password: str | None = None,
-        **extra_fields: Any
+        self, email: str, password: str | None = None, **extra_fields: Any
     ) -> "CustomUser":
         """Crée et sauvegarde un utilisateur avec l'email et le mot de passe donnés."""
         if not email:
             raise ValueError(_("L'adresse email est obligatoire"))
-        
+
         email = self.normalize_email(email).lower()
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
@@ -29,10 +30,7 @@ class CustomUserManager(BaseUserManager):
         return user
 
     def create_superuser(
-        self,
-        email: str,
-        password: str | None = None,
-        **extra_fields: Any
+        self, email: str, password: str | None = None, **extra_fields: Any
     ) -> "CustomUser":
         """Crée et sauvegarde un superutilisateur avec l'email et le mot de passe donnés."""
         extra_fields.setdefault("is_staff", True)
@@ -59,30 +57,18 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(
         verbose_name=_("Adresse email"),
         unique=True,
-        help_text=_("L'adresse email servira d'identifiant de connexion")
+        help_text=_("L'adresse email servira d'identifiant de connexion"),
     )
-    first_name = models.CharField(
-        verbose_name=_("Prénom"),
-        max_length=150,
-        blank=True
-    )
-    last_name = models.CharField(
-        verbose_name=_("Nom"),
-        max_length=150,
-        blank=True
-    )
-    phone = models.CharField(
-        verbose_name=_("Téléphone"),
-        max_length=20,
-        blank=True
-    )
+    first_name = models.CharField(verbose_name=_("Prénom"), max_length=150, blank=True)
+    last_name = models.CharField(verbose_name=_("Nom"), max_length=150, blank=True)
+    phone = models.CharField(verbose_name=_("Téléphone"), max_length=20, blank=True)
     role = models.CharField(
         verbose_name=_("Rôle"),
         max_length=20,
         choices=ROLE_CHOICES,
         default="reader",
         db_index=True,
-        help_text=_("Le rôle détermine les permissions de l'utilisateur")
+        help_text=_("Le rôle détermine les permissions de l'utilisateur"),
     )
     library = models.ForeignKey(
         "libraries.Library",
@@ -91,23 +77,21 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         null=True,
         blank=True,
         db_index=True,
-        related_name="users"
+        related_name="users",
     )
     is_active = models.BooleanField(
         verbose_name=_("Actif"),
         default=True,
         db_index=True,
-        help_text=_("Désactivez cette case pour désactiver le compte")
+        help_text=_("Désactivez cette case pour désactiver le compte"),
     )
     is_staff = models.BooleanField(
         verbose_name=_("Staff"),
         default=False,
-        help_text=_("Détermine si l'utilisateur peut accéder à l'admin")
+        help_text=_("Détermine si l'utilisateur peut accéder à l'admin"),
     )
     date_joined = models.DateTimeField(
-        verbose_name=_("Date d'inscription"),
-        auto_now_add=True,
-        db_index=True
+        verbose_name=_("Date d'inscription"), auto_now_add=True, db_index=True
     )
 
     objects = CustomUserManager()

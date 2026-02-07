@@ -15,7 +15,11 @@ from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView
 
-from .forms import CustomAuthenticationForm, CustomPasswordChangeForm, SuperAdminSetupForm
+from .forms import (
+    CustomAuthenticationForm,
+    CustomPasswordChangeForm,
+    SuperAdminSetupForm,
+)
 
 
 User = get_user_model()

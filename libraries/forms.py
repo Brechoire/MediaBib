@@ -21,12 +21,14 @@ class LibraryCreateForm(forms.ModelForm):
         label=_("Mot de passe"),
         strip=False,
         widget=forms.PasswordInput(attrs={"placeholder": "Mot de passe"}),
-        help_text=_("Le mot de passe sera utilisé pour le compte administrateur de la médiathèque.")
+        help_text=_(
+            "Le mot de passe sera utilisé pour le compte administrateur de la médiathèque."
+        ),
     )
     password2 = forms.CharField(
         label=_("Confirmation du mot de passe"),
         strip=False,
-        widget=forms.PasswordInput(attrs={"placeholder": "Confirmez le mot de passe"})
+        widget=forms.PasswordInput(attrs={"placeholder": "Confirmez le mot de passe"}),
     )
 
     class Meta:
@@ -36,7 +38,9 @@ class LibraryCreateForm(forms.ModelForm):
             "name": forms.TextInput(attrs={"placeholder": "Nom de la médiathèque"}),
             "email": forms.EmailInput(attrs={"placeholder": "email@mediatheque.com"}),
             "phone": forms.TextInput(attrs={"placeholder": "0123456789"}),
-            "address": forms.Textarea(attrs={"placeholder": "Adresse complète", "rows": 3}),
+            "address": forms.Textarea(
+                attrs={"placeholder": "Adresse complète", "rows": 3}
+            ),
             "postal_code": forms.TextInput(attrs={"placeholder": "75000"}),
             "city": forms.TextInput(attrs={"placeholder": "Paris"}),
         }
@@ -45,16 +49,16 @@ class LibraryCreateForm(forms.ModelForm):
         """Vérifie que les deux mots de passe correspondent."""
         password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
-        
+
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError(_("Les mots de passe ne correspondent pas."))
-        
+
         return password2
 
     def save(self, commit: bool = True) -> Library:
         """Sauvegarde la médiathèque et crée le compte admin associé."""
         library = super().save(commit=commit)
-        
+
         if commit:
             # Créer l'utilisateur admin de la médiathèque
             User.objects.create_user(
@@ -63,9 +67,9 @@ class LibraryCreateForm(forms.ModelForm):
                 first_name=library.name,
                 last_name="Admin",
                 role="library_admin",
-                library=library
+                library=library,
             )
-        
+
         return library
 
 
@@ -78,10 +82,16 @@ class LibraryUpdateForm(forms.ModelForm):
         widgets = {
             "name": forms.TextInput(attrs={"placeholder": "Nom de la médiathèque"}),
             "phone": forms.TextInput(attrs={"placeholder": "0123456789"}),
-            "address": forms.Textarea(attrs={"placeholder": "Adresse complète", "rows": 3}),
+            "address": forms.Textarea(
+                attrs={"placeholder": "Adresse complète", "rows": 3}
+            ),
             "postal_code": forms.TextInput(attrs={"placeholder": "75000"}),
             "city": forms.TextInput(attrs={"placeholder": "Paris"}),
-            "is_active": forms.CheckboxInput(attrs={"class": "w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"}),
+            "is_active": forms.CheckboxInput(
+                attrs={
+                    "class": "w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                }
+            ),
         }
         labels = {
             "name": "Nom de la médiathèque",
