@@ -1,7 +1,7 @@
 [tool.pytest.ini_options]
 minversion = "6.0"
 DJANGO_SETTINGS_MODULE = "app.settings"
-python_files = ["test_*.py", "*_test.py"]
+python_files = ["test_*.py", "*_test.py", "tests.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 testpaths = ["."]
