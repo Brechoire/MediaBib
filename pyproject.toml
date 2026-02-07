@@ -8,6 +8,8 @@ addopts = [
     "-v",
     "--tb=short",
     "--strict-markers",
+    "--ignore=env",
+    "--ignore=.venv",
 ]
 
 [build-system]
