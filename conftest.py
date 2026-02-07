@@ -1,7 +1,6 @@
 """Configuration pytest racine pour MediaBibli."""
 
 import os
-import sys
 
 import django
 
