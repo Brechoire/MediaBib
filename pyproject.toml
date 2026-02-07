@@ -1,0 +1,19 @@
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "app.settings"
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+# Allow pytest to pass with no tests collected (important for CI)
+addopts = [
+    "-v",
+    "--tb=short",
+    "--strict-markers",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mediabib"
+version = "0.1.0"
