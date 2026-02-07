@@ -8,7 +8,6 @@ from django.urls import reverse
 
 from libraries.models import Library
 
-
 User = get_user_model()
 
 

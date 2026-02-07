@@ -13,7 +13,6 @@ from django.views.generic import TemplateView
 
 from libraries.models import Library
 
-
 User = get_user_model()
 
 

@@ -11,7 +11,6 @@ from .views import (
     LibraryUpdateView,
 )
 
-
 app_name = "libraries"
 
 urlpatterns = [

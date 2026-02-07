@@ -21,7 +21,6 @@ from .forms import (
     SuperAdminSetupForm,
 )
 
-
 User = get_user_model()
 
 

@@ -5,7 +5,6 @@ Vues de l'app home.
 from django.contrib.auth import get_user_model
 from django.shortcuts import redirect, render
 
-
 User = get_user_model()
 
 

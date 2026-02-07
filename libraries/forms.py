@@ -8,7 +8,6 @@ from django.utils.translation import gettext_lazy as _
 
 from .models import Library
 
-
 User = get_user_model()
 
 

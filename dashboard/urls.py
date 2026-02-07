@@ -6,7 +6,6 @@ from django.urls import path
 
 from .views import DashboardIndexView, reader_placeholder_view
 
-
 app_name = "dashboard"
 
 urlpatterns = [

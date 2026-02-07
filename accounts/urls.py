@@ -11,7 +11,6 @@ from .views import (
     SuperAdminSetupView,
 )
 
-
 app_name = "accounts"
 
 urlpatterns = [
