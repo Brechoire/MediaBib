@@ -2,6 +2,8 @@
 Modèles de l'app config.
 """
 
+from typing import Any
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -55,15 +57,17 @@ class SiteConfig(models.Model):
         verbose_name_plural = _("Configuration du site")
 
     def __str__(self) -> str:
-        return self.site_name
+        return str(self.site_name)
 
     @classmethod
     def get_solo(cls) -> "SiteConfig":
         """Retourne l'instance unique de configuration (crée si inexistante)."""
-        obj, created = cls.objects.get_or_create(pk=1)
-        return obj
+        from typing import cast
 
-    def save(self, *args, **kwargs) -> None:
+        obj, created = cls.objects.get_or_create(pk=1)
+        return cast("SiteConfig", obj)
+
+    def save(self, *args: Any, **kwargs: Any) -> None:
         """S'assure qu'il n'y a qu'une seule instance."""
         self.pk = 1
         super().save(*args, **kwargs)

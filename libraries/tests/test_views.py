@@ -4,6 +4,7 @@ Tests des vues de gestion des médiathèques.
 
 import pytest
 from django.contrib.auth import get_user_model
+from django.test import Client
 from django.urls import reverse
 
 from libraries.models import Library
@@ -15,7 +16,7 @@ User = get_user_model()
 class TestLibraryCreation:
     """Tests de la création de médiathèques par le superadmin."""
 
-    def test_create_library_requires_superadmin(self, client) -> None:
+    def test_create_library_requires_superadmin(self, client: Client) -> None:
         """Test que la création de médiathèque nécessite un superadmin."""
         # Créer un utilisateur normal
         user = User.objects.create_user(
@@ -28,7 +29,7 @@ class TestLibraryCreation:
         # Devrait être interdit (403) ou redirigé
         assert response.status_code in [302, 403]
 
-    def test_create_library_page_renders_for_superadmin(self, client) -> None:
+    def test_create_library_page_renders_for_superadmin(self, client: Client) -> None:
         """Test que la page de création s'affiche pour le superadmin."""
         superadmin = User.objects.create_superuser(
             email="superadmin@test.com", password="TestPass123!", role="superadmin"
@@ -39,7 +40,7 @@ class TestLibraryCreation:
 
         assert response.status_code == 200
 
-    def test_create_library_success(self, client) -> None:
+    def test_create_library_success(self, client: Client) -> None:
         """Test la création réussie d'une médiathèque."""
         superadmin = User.objects.create_superuser(
             email="superadmin@test.com", password="TestPass123!", role="superadmin"
@@ -62,7 +63,7 @@ class TestLibraryCreation:
         assert response.status_code == 302
         assert Library.objects.filter(name="Nouvelle Médiathèque").exists()
 
-    def test_create_library_creates_admin_user(self, client) -> None:
+    def test_create_library_creates_admin_user(self, client: Client) -> None:
         """Test que la création de médiathèque crée aussi un admin."""
         superadmin = User.objects.create_superuser(
             email="superadmin@test.com", password="TestPass123!", role="superadmin"

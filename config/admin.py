@@ -2,7 +2,10 @@
 Admin configuration pour l'app config.
 """
 
+from typing import Any
+
 from django.contrib import admin
+from django.http import HttpRequest
 
 from .models import SiteConfig
 
@@ -18,10 +21,10 @@ class SiteConfigAdmin(admin.ModelAdmin):
         ("Maintenance", {"fields": ("maintenance_mode",), "classes": ("collapse",)}),
     )
 
-    def has_add_permission(self, request) -> bool:
+    def has_add_permission(self, request: HttpRequest) -> bool:
         """Empêche la création de multiples instances."""
         return not SiteConfig.objects.exists()
 
-    def has_delete_permission(self, request, obj=None) -> bool:
+    def has_delete_permission(self, request: HttpRequest, obj: Any = None) -> bool:
         """Empêche la suppression de l'instance unique."""
         return False

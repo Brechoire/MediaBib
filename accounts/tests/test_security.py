@@ -4,6 +4,7 @@ Tests de sécurité.
 
 import pytest
 from django.contrib.auth import get_user_model
+from django.test import Client
 
 User = get_user_model()
 
@@ -24,7 +25,7 @@ class TestSecurity:
             "pbkdf2_sha256$"
         )  # Algorithme Django par défaut
 
-    def test_csrf_protection_enabled(self, client) -> None:
+    def test_csrf_protection_enabled(self, client: Client) -> None:
         """Test que la protection CSRF est activée."""
         response = client.get("/accounts/login/")
 
@@ -33,7 +34,7 @@ class TestSecurity:
         content = response.content.decode()
         assert "csrfmiddlewaretoken" in content or "csrf" in content.lower()
 
-    def test_sql_injection_prevention_in_login(self, client) -> None:
+    def test_sql_injection_prevention_in_login(self, client: Client) -> None:
         """Test la prévention des injections SQL dans le login."""
         # Tentative d'injection SQL
         data = {"username": "' OR '1'='1", "password": "' OR '1'='1"}
@@ -43,7 +44,7 @@ class TestSecurity:
         # Ne doit pas réussir à se connecter
         assert response.status_code == 200  # Rester sur la page de login
 
-    def test_xss_prevention_in_templates(self, client) -> None:
+    def test_xss_prevention_in_templates(self, client: Client) -> None:
         """Test la prévention XSS dans les templates."""
         # Créer un utilisateur avec un nom contenant du HTML
         User.objects.create_user(
@@ -61,7 +62,7 @@ class TestSecurity:
         # Le script malveillant doit être échappé
         assert "alert('XSS')" not in content
 
-    def test_user_cannot_access_other_users_data(self, client) -> None:
+    def test_user_cannot_access_other_users_data(self, client: Client) -> None:
         """Test qu'un utilisateur ne peut pas accéder aux données d'autrui."""
         user1 = User.objects.create_user(
             email="user1@test.com", password="TestPass123!", role="reader"
@@ -77,7 +78,7 @@ class TestSecurity:
         # Ici on vérifie simplement que la session est correcte
         assert client.session.get("_auth_user_id") == str(user1.id)
 
-    def test_admin_requires_staff_status(self, client) -> None:
+    def test_admin_requires_staff_status(self, client: Client) -> None:
         """Test que l'admin nécessite le statut staff."""
         user = User.objects.create_user(
             email="user@test.com",

@@ -3,12 +3,13 @@ Vues de l'app home.
 """
 
 from django.contrib.auth import get_user_model
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 
 User = get_user_model()
 
 
-def home_view(request):
+def home_view(request: HttpRequest) -> HttpResponse:
     """Vue d'accueil conditionnelle.
 
     Redirige vers la configuration initiale si aucun utilisateur n'existe.

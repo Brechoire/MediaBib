@@ -2,10 +2,12 @@
 Vues de l'app libraries.
 """
 
+from typing import Any
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.db.models import Count
-from django.http import Http404
+from django.db.models import Count, QuerySet
+from django.http import Http404, HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
@@ -18,7 +20,12 @@ class SuperAdminRequiredMixin(UserPassesTestMixin):
 
     def test_func(self) -> bool:
         """Vérifie si l'utilisateur est un superadmin."""
-        return self.request.user.is_authenticated and self.request.user.is_superadmin
+        from typing import cast
+
+        user = self.request.user
+        is_auth = cast(bool, user.is_authenticated)
+        is_super = cast(bool, user.is_superadmin)
+        return is_auth and is_super
 
 
 class LibraryAdminRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
@@ -46,9 +53,11 @@ class LibraryListView(LoginRequiredMixin, SuperAdminRequiredMixin, ListView):
     ordering = ["-created_at"]
     paginate_by = 25  # Pagination pour optimiser les performances
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """Ajoute des informations au contexte."""
-        context = super().get_context_data(**kwargs)
+        from typing import cast
+
+        context = cast(dict[str, Any], super().get_context_data(**kwargs))
         context["breadcrumb_items"] = [
             {"label": "Médiathèques", "url": None},
         ]
@@ -63,9 +72,11 @@ class LibraryCreateView(LoginRequiredMixin, SuperAdminRequiredMixin, CreateView)
     template_name = "libraries/library_form.html"
     success_url = reverse_lazy("libraries:list")
 
-    def get_context_data(self, **kwargs) -> dict:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """Ajoute des informations au contexte."""
-        context = super().get_context_data(**kwargs)
+        from typing import cast
+
+        context = cast(dict[str, Any], super().get_context_data(**kwargs))
         context["title"] = "Créer une médiathèque"
         context["breadcrumb_items"] = [
             {"label": "Médiathèques", "url": reverse_lazy("libraries:list")},
@@ -81,12 +92,14 @@ class LibraryCreateView(LoginRequiredMixin, SuperAdminRequiredMixin, CreateView)
 
         return context
 
-    def form_valid(self, form):
+    def form_valid(self, form: LibraryCreateForm) -> HttpResponse:
         """Sauvegarde et stocke le mot de passe en clair pour affichage."""
+        from typing import cast
+
         # Récupérer le mot de passe avant qu'il ne soit hashé
         password = form.cleaned_data.get("password1")
 
-        response = super().form_valid(form)
+        response = cast(HttpResponse, super().form_valid(form))
 
         # Stocker le mot de passe en clair dans la session
         if password:
@@ -109,7 +122,7 @@ class LibraryUpdateView(LibraryAdminRequiredMixin, UpdateView):
     template_name = "libraries/library_update.html"
     pk_url_kwarg = "pk"
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Library]:
         """Restreint la modification selon le rôle de l'utilisateur."""
         if self.request.user.is_superadmin:
             # Superadmin peut modifier toutes les médiathèques
@@ -118,9 +131,11 @@ class LibraryUpdateView(LibraryAdminRequiredMixin, UpdateView):
             # Library admin peut uniquement modifier sa propre médiathèque
             return Library.objects.filter(pk=self.request.user.library_id)
 
-    def get_object(self, queryset=None):
+    def get_object(self, queryset: QuerySet[Library] | None = None) -> Library:
         """Récupère l'objet avec vérification des permissions."""
-        obj = super().get_object(queryset)
+        from typing import cast
+
+        obj = cast(Library, super().get_object(queryset))
 
         # Vérifier que le library admin ne modifie que sa propre médiathèque
         if (
@@ -133,16 +148,18 @@ class LibraryUpdateView(LibraryAdminRequiredMixin, UpdateView):
 
         return obj
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         """Redirige vers la page appropriée après modification."""
         if self.request.user.is_superadmin:
-            return reverse_lazy("libraries:list")
+            return str(reverse_lazy("libraries:list"))
         else:
-            return reverse_lazy("dashboard:index")
+            return str(reverse_lazy("dashboard:index"))
 
-    def get_context_data(self, **kwargs) -> dict:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """Ajoute des informations au contexte."""
-        context = super().get_context_data(**kwargs)
+        from typing import cast
+
+        context = cast(dict[str, Any], super().get_context_data(**kwargs))
         context["title"] = f"Modifier : {self.object.name}"
 
         if self.request.user.is_superadmin:
@@ -158,9 +175,11 @@ class LibraryUpdateView(LibraryAdminRequiredMixin, UpdateView):
 
         return context
 
-    def form_valid(self, form):
+    def form_valid(self, form: LibraryUpdateForm) -> HttpResponse:
         """Sauvegarde le formulaire et affiche un message de succès."""
-        response = super().form_valid(form)
+        from typing import cast
+
+        response = cast(HttpResponse, super().form_valid(form))
         messages.success(
             self.request,
             f"'{self.object.name}' a été mis à jour avec succès !",
@@ -176,13 +195,15 @@ class LibraryDetailView(LoginRequiredMixin, DetailView):
     context_object_name = "library"
     pk_url_kwarg = "pk"
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Library]:
         """Optimise la requête avec l'annotation du nombre d'utilisateurs."""
         return Library.objects.annotate(user_count=Count("users"))
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """Ajoute des informations au contexte."""
-        context = super().get_context_data(**kwargs)
+        from typing import cast
+
+        context = cast(dict[str, Any], super().get_context_data(**kwargs))
         context["breadcrumb_items"] = [
             {"label": "Médiathèques", "url": reverse_lazy("libraries:list")},
             {"label": self.object.name, "url": None},

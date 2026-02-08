@@ -27,7 +27,9 @@ class CustomUserManager(BaseUserManager):
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
-        return user
+        from typing import cast
+
+        return cast("CustomUser", user)
 
     def create_superuser(
         self, email: str, password: str | None = None, **extra_fields: Any
@@ -110,27 +112,29 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self) -> str:
         """Retourne la représentation textuelle de l'utilisateur."""
-        return self.email
+        return str(self.email)
 
     @property
     def is_superadmin(self) -> bool:
         """Vérifie si l'utilisateur est un superadmin."""
-        return self.role == "superadmin"
+        return bool(self.role == "superadmin")
 
     @property
     def is_library_admin(self) -> bool:
         """Vérifie si l'utilisateur est un admin de médiathèque."""
-        return self.role == "library_admin"
+        return bool(self.role == "library_admin")
 
     @property
     def is_reader(self) -> bool:
         """Vérifie si l'utilisateur est un lecteur."""
-        return self.role == "reader"
+        return bool(self.role == "reader")
 
     def get_full_name(self) -> str:
         """Retourne le nom complet de l'utilisateur."""
-        return f"{self.first_name} {self.last_name}".strip() or self.email
+        full_name = f"{self.first_name} {self.last_name}".strip()
+        return full_name or str(self.email)
 
     def get_short_name(self) -> str:
         """Retourne le prénom de l'utilisateur."""
-        return self.first_name or self.email
+        short_name = str(self.first_name)
+        return short_name or str(self.email)
