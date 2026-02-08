@@ -2,6 +2,8 @@
 Formulaires de l'app accounts.
 """
 
+from typing import cast
+
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import (
@@ -10,6 +12,8 @@ from django.contrib.auth.forms import (
     UserCreationForm,
 )
 from django.utils.translation import gettext_lazy as _
+
+from accounts.models import CustomUser
 
 User = get_user_model()
 
@@ -39,9 +43,9 @@ class SuperAdminSetupForm(UserCreationForm):
         model = User
         fields = ("email", "first_name", "last_name")
 
-    def save(self, commit: bool = True) -> User:
+    def save(self, commit: bool = True) -> CustomUser:
         """Sauvegarde l'utilisateur en tant que superadmin."""
-        user = super().save(commit=False)
+        user = cast(CustomUser, super().save(commit=False))
         user.role = "superadmin"
         user.is_staff = True
         user.is_superuser = True

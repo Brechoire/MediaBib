@@ -57,4 +57,4 @@ class Library(models.Model):
 
     def __str__(self) -> str:
         """Retourne la représentation textuelle de la médiathèque."""
-        return self.name
+        return str(self.name)

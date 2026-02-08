@@ -2,12 +2,15 @@
 Context processor pour la configuration du site.
 """
 
+from typing import Any
+
 from django.core.cache import cache
+from django.http import HttpRequest
 
 from .models import SiteConfig
 
 
-def site_config(request):
+def site_config(request: HttpRequest) -> dict[str, Any]:
     """Ajoute la configuration du site au contexte (avec cache)."""
     cache_key = "site_config"
     config = cache.get(cache_key)

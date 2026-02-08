@@ -10,7 +10,7 @@ from django.contrib.auth.views import (
     LogoutView,
     PasswordChangeView,
 )
-from django.http import HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
@@ -32,13 +32,13 @@ class SuperAdminSetupView(CreateView):
     template_name = "accounts/setup.html"
     success_url = reverse_lazy("home")
 
-    def dispatch(self, request, *args, **kwargs) -> Any:
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """Redirige vers l'accueil si des utilisateurs existent déjà."""
         if User.objects.exists():
             return redirect("home")
         return super().dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form) -> HttpResponseRedirect:
+    def form_valid(self, form: SuperAdminSetupForm) -> HttpResponseRedirect:
         """Connecte l'utilisateur après l'inscription."""
         response = super().form_valid(form)
         login(self.request, self.object)

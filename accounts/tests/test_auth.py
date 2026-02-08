@@ -2,8 +2,10 @@
 Tests de l'authentification et de l'inscription.
 """
 
+
 import pytest
 from django.contrib.auth import get_user_model
+from django.test import Client
 from django.urls import reverse
 
 User = get_user_model()
@@ -13,13 +15,13 @@ User = get_user_model()
 class TestSuperAdminRegistration:
     """Tests de l'inscription du premier superadmin."""
 
-    def test_setup_page_renders_when_no_users(self, client) -> None:
+    def test_setup_page_renders_when_no_users(self, client: Client) -> None:
         """Test que la page s'affiche quand il n'y a pas d'utilisateurs."""
         response = client.get(reverse("accounts:setup"))
 
         assert response.status_code == 200
 
-    def test_setup_redirects_to_home_when_users_exist(self, client) -> None:
+    def test_setup_redirects_to_home_when_users_exist(self, client: Client) -> None:
         """Test que la page redirige vers l'accueil si des utilisateurs existent."""
         User.objects.create_user(
             email="existing@test.com", password="TestPass123!", role="reader"
@@ -30,7 +32,7 @@ class TestSuperAdminRegistration:
         assert response.status_code == 302
         assert response.url == reverse("home")
 
-    def test_setup_creates_superadmin(self, client) -> None:
+    def test_setup_creates_superadmin(self, client: Client) -> None:
         """Test que l'inscription crée un superadmin."""
         data = {
             "email": "superadmin@test.com",
@@ -49,7 +51,7 @@ class TestSuperAdminRegistration:
         assert user.role == "superadmin"
         assert user.is_superuser is True
 
-    def test_setup_validates_email(self, client) -> None:
+    def test_setup_validates_email(self, client: Client) -> None:
         """Test que l'email est validé."""
         data = {
             "email": "invalid-email",
@@ -65,7 +67,7 @@ class TestSuperAdminRegistration:
         assert not User.objects.filter(email="invalid-email").exists()
         assert "email" in response.context["form"].errors
 
-    def test_setup_passwords_must_match(self, client) -> None:
+    def test_setup_passwords_must_match(self, client: Client) -> None:
         """Test que les mots de passe doivent correspondre."""
         data = {
             "email": "test@test.com",
@@ -86,13 +88,13 @@ class TestSuperAdminRegistration:
 class TestLoginLogout:
     """Tests de connexion et déconnexion."""
 
-    def test_login_page_renders(self, client) -> None:
+    def test_login_page_renders(self, client: Client) -> None:
         """Test que la page de connexion s'affiche."""
         response = client.get(reverse("accounts:login"))
 
         assert response.status_code == 200
 
-    def test_login_with_valid_credentials(self, client) -> None:
+    def test_login_with_valid_credentials(self, client: Client) -> None:
         """Test la connexion avec des identifiants valides."""
         User.objects.create_user(
             email="user@test.com", password="TestPass123!", role="reader"
@@ -103,7 +105,7 @@ class TestLoginLogout:
 
         assert response.status_code == 302
 
-    def test_login_with_invalid_credentials(self, client) -> None:
+    def test_login_with_invalid_credentials(self, client: Client) -> None:
         """Test la connexion avec des identifiants invalides."""
         User.objects.create_user(
             email="user@test.com", password="TestPass123!", role="reader"
@@ -117,7 +119,7 @@ class TestLoginLogout:
             "__all__" in response.context["form"].errors or "form" in response.context
         )
 
-    def test_logout_redirects_to_home(self, client) -> None:
+    def test_logout_redirects_to_home(self, client: Client) -> None:
         """Test que la déconnexion redirige vers l'accueil."""
         user = User.objects.create_user(
             email="user@test.com", password="TestPass123!", role="reader"
@@ -134,14 +136,14 @@ class TestLoginLogout:
 class TestPasswordChange:
     """Tests du changement de mot de passe."""
 
-    def test_password_change_requires_login(self, client) -> None:
+    def test_password_change_requires_login(self, client: Client) -> None:
         """Test que le changement de mot de passe nécessite une connexion."""
         response = client.get(reverse("accounts:password_change"))
 
         assert response.status_code == 302
         assert "/login/" in response.url
 
-    def test_password_change_validates_old_password(self, client) -> None:
+    def test_password_change_validates_old_password(self, client: Client) -> None:
         """Test que l'ancien mot de passe doit être valide."""
         user = User.objects.create_user(
             email="user@test.com", password="OldPass123!", role="reader"
@@ -158,7 +160,7 @@ class TestPasswordChange:
         assert response.status_code == 200
         assert "old_password" in response.context["form"].errors
 
-    def test_password_change_success(self, client) -> None:
+    def test_password_change_success(self, client: Client) -> None:
         """Test le changement réussi de mot de passe."""
         user = User.objects.create_user(
             email="user@test.com", password="OldPass123!", role="reader"
