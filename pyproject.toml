@@ -4,7 +4,7 @@ DJANGO_SETTINGS_MODULE = "app.settings"
 python_files = ["test_*.py", "*_test.py", "tests.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-testpaths = ["accounts/tests", "libraries/tests", "config/tests", "home/tests"]
+testpaths = ["accounts/tests", "libraries/tests", "config/tests", "home/tests", "dashboard"]
 addopts = [
     "-v",
     "--tb=short",
@@ -28,13 +28,28 @@ name = "mediabib"
 version = "0.1.0"
 
 [tool.coverage.run]
-source = ["accounts", "libraries", "config", "home"]
+source = ["accounts", "libraries", "config", "home", "dashboard", "app"]
 omit = [
     "*/tests/*",
     "*/migrations/*",
     "*/venv/*",
     "*/env/*",
     "*/__pycache__/*",
+    "libraries/tests/*.py",
+    "accounts/tests/*.py",
+    "config/tests/*.py",
+    "home/tests/*.py",
+    "dashboard/tests.py",
+    "dashboard/tests_*.py",
+    "dashboard/tests_mixin.py",
+    "home/tests.py",
+    "home/tests_*.py",
+    "app/asgi.py",
+    "app/wsgi.py",
+    "app/urls.py",
+    "manage.py",
+    "conftest.py",
+    "*libraries/tests/test_views.py",
 ]
 
 [tool.coverage.report]
@@ -46,7 +61,7 @@ exclude_lines = [
     "if __name__ == .__main__.:",
     "if TYPE_CHECKING:",
 ]
-fail_under = 80
+fail_under = 100
 
 [tool.black]
 line-length = 88

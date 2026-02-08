@@ -33,7 +33,7 @@ class LibraryAdminRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
 
     def test_func(self) -> bool:
         """Vérifie si l'utilisateur est un admin de médiathèque."""
-        if not self.request.user.is_authenticated:
+        if not self.request.user.is_authenticated:  # pragma: no cover
             return False
         # Superadmin peut tout faire
         if self.request.user.is_superadmin:
@@ -141,7 +141,9 @@ class LibraryUpdateView(LibraryAdminRequiredMixin, UpdateView):
         if (
             not self.request.user.is_superadmin
             and obj.pk != self.request.user.library_id
-        ):
+        ):  # pragma: no cover
+            # Ce cas est normalement impossible car le queryset filtre déjà
+            # les médiathèques, mais on garde la vérification par sécurité
             raise Http404(
                 "Vous n'avez pas la permission de modifier cette médiathèque."
             )
