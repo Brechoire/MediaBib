@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Q
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
@@ -19,7 +20,7 @@ User = get_user_model()
 class DashboardAccessMixin(LoginRequiredMixin):
     """Mixin de base pour les vues du dashboard."""
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """Redirige les lecteurs vers la page en construction."""
         # Vérifie d'abord si l'utilisateur est authentifié (par LoginRequiredMixin)
         if not request.user.is_authenticated:
@@ -33,7 +34,7 @@ class DashboardAccessMixin(LoginRequiredMixin):
 class SuperAdminRequiredMixin(LoginRequiredMixin):
     """Mixin qui vérifie que l'utilisateur est un superadmin."""
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """Vérifie si l'utilisateur est un superadmin."""
         if not request.user.is_superadmin:
             # Redirige vers le dashboard library si c'est un admin de médiothèque
@@ -48,7 +49,7 @@ class SuperAdminRequiredMixin(LoginRequiredMixin):
                 return render(request, "dashboard/reader_placeholder.html")
         return super().dispatch(request, *args, **kwargs)
 
-    def get_library_context(self, request):
+    def get_library_context(self, request: HttpRequest) -> dict[str, Any]:
         """Prépare le contexte pour le dashboard library admin."""
         library = request.user.library
         readers = User.objects.filter(library=library, role="reader")
@@ -79,7 +80,9 @@ class DashboardIndexView(DashboardAccessMixin, TemplateView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """Prépare le contexte selon le rôle."""
-        context = super().get_context_data(**kwargs)
+        from typing import cast
+
+        context = cast(dict[str, Any], super().get_context_data(**kwargs))
         user = self.request.user
 
         if user.is_superadmin:
@@ -130,6 +133,6 @@ class DashboardIndexView(DashboardAccessMixin, TemplateView):
 
 
 @login_required
-def reader_placeholder_view(request):
+def reader_placeholder_view(request: HttpRequest) -> HttpResponse:
     """Vue pour les lecteurs (pas de dashboard)."""
     return render(request, "dashboard/reader_placeholder.html")

@@ -48,11 +48,13 @@ class LibraryCreateForm(forms.ModelForm):
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError(_("Les mots de passe ne correspondent pas."))
 
-        return password2
+        return str(password2) if password2 is not None else ""
 
     def save(self, commit: bool = True) -> Library:
         """Sauvegarde la médiathèque et crée le compte admin associé."""
-        library = super().save(commit=commit)
+        from typing import cast
+
+        library = cast(Library, super().save(commit=commit))
 
         if commit:
             # Créer l'utilisateur admin de la médiathèque
